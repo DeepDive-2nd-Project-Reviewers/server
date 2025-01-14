@@ -1,14 +1,7 @@
 package reviewers.server.domain.contents.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@SuperBuilder
 @Entity
 @Table(name = "content_heart")
 public class ContentHeart {

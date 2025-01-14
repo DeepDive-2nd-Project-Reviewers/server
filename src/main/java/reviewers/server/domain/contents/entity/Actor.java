@@ -1,9 +1,7 @@
 package reviewers.server.domain.contents.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
-@NoArgsConstructor
 @Entity
 @Table(name = "actor")
 public class Actor {

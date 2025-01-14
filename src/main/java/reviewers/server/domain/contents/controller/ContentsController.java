@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contents")
+@RequestMapping("/api/v1/contents")
 public class ContentsController {
 
     private final ContentsService contentsService;

@@ -5,11 +5,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@SuperBuilder
 @Entity
+@NoArgsConstructor
+@SuperBuilder
 @Table(name = "contents")
 public class Contents {
     @Id
