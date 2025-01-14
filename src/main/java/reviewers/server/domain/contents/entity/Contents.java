@@ -27,4 +27,12 @@ public class Contents {
     private String image;
 
     private long heartCount;
+
+    public void updateContents(String category, String title, String writer, String summary, String image) {
+        this.category = category;
+        this.title = title;
+        this.writer = writer;
+        this.summary = summary;
+        this.image = image;
+    }
 }
