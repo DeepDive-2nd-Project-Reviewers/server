@@ -17,4 +17,6 @@ public class ContentsRequestDto {
     private String summary;
 
     private String image;
+
+    private String actor;
 }
