@@ -2,7 +2,7 @@
 name: "[Feat] issue title"
 about: Suggest an idea for this project
 title: "[Feat] issue title"
-labels: ''
+labels: feat, fix, hot fix, refactor
 assignees: ''
 
 ---
