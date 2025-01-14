@@ -8,6 +8,8 @@ import reviewers.server.domain.contents.dto.ContentsResponseDto;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.mapper.ContentsMapper;
 import reviewers.server.domain.contents.repository.ContentsRepository;
+import reviewers.server.global.exception.BaseErrorException;
+import reviewers.server.global.exception.ErrorType;
 
 import java.util.List;
 
@@ -24,15 +26,6 @@ public class ContentsService {
         return contentsMapper.toDto(contentsRepository.save(contents));
     }
 
-    public ContentsResponseDto update(Long id, ContentsRequestDto request) {
-        Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new NullPointerException("Content not found"));
-
-        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
-
-        return contentsMapper.toDto(content);
-    }
-
     public List<ContentsResponseDto> readAllByCategory(String category) {
         return contentsRepository.findAllByCategory(category).stream()
                 .map(contentsMapper::toDto)
@@ -41,7 +34,16 @@ public class ContentsService {
 
     public ContentsResponseDto readByContentId(Long id) {
         Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new NullPointerException("Content not found"));
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+
+        return contentsMapper.toDto(content);
+    }
+
+    public ContentsResponseDto update(Long id, ContentsRequestDto request) {
+        Contents content = contentsRepository.findById(id)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+
+        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
 
         return contentsMapper.toDto(content);
     }
