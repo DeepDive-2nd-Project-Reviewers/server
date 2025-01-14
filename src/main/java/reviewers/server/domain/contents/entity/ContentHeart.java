@@ -11,21 +11,18 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @SuperBuilder
 @Entity
-@Table(name = "contents")
-public class Contents {
+@Table(name = "content_heart")
+public class ContentHeart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "content_id")
+    private Contents contents;
 
-    private String title;
-
-    private String writer;
-
-    private String summary;
-
-    private String image;
-
-    private long heartCount;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 }
