@@ -1,7 +1,9 @@
 package reviewers.server.domain.comment.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,5 +25,9 @@ public class CommentController {
         return ResponseEntity.ok(commentService.createComment(reviewId, commentRequest));
     }
 
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long reviewId) {
+        return ResponseEntity.ok(commentService.findCommentsByReviewId(reviewId));
+    }
 
 }
