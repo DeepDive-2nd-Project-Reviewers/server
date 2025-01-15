@@ -15,6 +15,7 @@ import reviewers.server.domain.comment.dto.CommentRequest;
 import reviewers.server.domain.comment.dto.CommentResponse;
 import reviewers.server.domain.comment.dto.CommentUpdateRequest;
 import reviewers.server.domain.comment.service.CommentService;
+import reviewers.server.global.success.SuccessResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,23 +25,23 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/review/{reviewId}")
-    public ResponseEntity<CommentResponse> createComment(@PathVariable Long reviewId, @RequestBody CommentRequest commentRequest) {
-        return ResponseEntity.ok(commentService.createComment(reviewId, commentRequest));
+    public SuccessResponse<CommentResponse> createComment(@PathVariable Long reviewId, @RequestBody CommentRequest commentRequest) {
+        return new SuccessResponse<>(commentService.createComment(reviewId, commentRequest));
     }
 
     @GetMapping("/review/{reviewId}")
-    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long reviewId) {
-        return ResponseEntity.ok(commentService.findCommentsByReviewId(reviewId));
+    public SuccessResponse<List<CommentResponse>> getComments(@PathVariable Long reviewId) {
+        return new SuccessResponse<>(commentService.findCommentsByReviewId(reviewId));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommentResponse> editComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
-        return ResponseEntity.ok(commentService.updateComment(commentId, commentUpdateRequest));
+    public SuccessResponse<CommentResponse> editComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
+        return new SuccessResponse<>(commentService.updateComment(commentId, commentUpdateRequest));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+    public SuccessResponse<Void> deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
-        return ResponseEntity.noContent().build();
+        return SuccessResponse.ok("삭제 성공");
     }
 }
