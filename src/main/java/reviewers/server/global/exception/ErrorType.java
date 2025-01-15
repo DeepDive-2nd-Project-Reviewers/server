@@ -12,9 +12,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public enum ErrorType {
 
     /* ------------------------------- Content -------------------------------------*/
-    _NOT_FOUND_CONTENT(BAD_REQUEST, "C4001", "해당 id에 해당하는 Content를 찾을 수 없습니다.");
+    _NOT_FOUND_CONTENT(BAD_REQUEST, "C4001", "해당 id에 해당하는 Content를 찾을 수 없습니다."),
 
     /* ------------------------------- User -------------------------------------*/
+    _NOT_FOUND_USER(BAD_REQUEST, "U4001", "해당 id에 해당하는 User를 찾을 수 없습니다.");
 
 
     private HttpStatus status;
