@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import reviewers.server.domain.user.provider.JwtProvider;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -24,8 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // 토큰 검사 제외 경로
-        if (requestURI.startsWith("/api/v1/user/signin") || requestURI.startsWith("/api/v1/user/signup")) {
-            filterChain.doFilter(request, response);
+        if (requestURI.startsWith("/api/v1/user/")) {
+            filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
 
