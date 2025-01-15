@@ -1,5 +1,6 @@
 package reviewers.server.domain.comment.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,11 @@ public class CommentService {
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
     }
 
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_COMMENT));
+    }
+
     @Transactional
     public CommentResponse createComment(CommentRequest request) {
         User user = findUser(request);
@@ -43,5 +49,19 @@ public class CommentService {
         return commentConverter.toResponse(savedComment);
     }
 
+    @Transactional(readOnly = true)
+    public List<CommentResponse> findCommentsByReviewId(Long reviewId) {
+        return commentRepository.findByReviewId(reviewId).stream()
+                .map(commentConverter::toResponse)
+                .toList();
+    }
 
+    @Transactional
+    public CommentResponse updateComment(Long commentId, String newContent) {
+        Comment comment = findComment(commentId);
+
+        comment.updateContent(newContent);
+
+        return commentConverter.toResponse(comment);
+    }
 }
