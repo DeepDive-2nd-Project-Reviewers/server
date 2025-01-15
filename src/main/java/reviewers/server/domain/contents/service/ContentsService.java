@@ -50,7 +50,7 @@ public class ContentsService {
 
     public void deleteById(Long id) {
         contentsRepository.findById(id)
-                .orElseThrow(() -> new NullPointerException("Content not found"));
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
         contentsRepository.deleteById(id);
     }
 }
