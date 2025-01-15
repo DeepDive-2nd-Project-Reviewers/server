@@ -64,4 +64,9 @@ public class CommentService {
         return commentConverter.toResponse(comment);
     }
 
+    @Transactional
+    public void deleteComment(Long commentId) {
+        Comment comment = findComment(commentId);
+        commentRepository.delete(comment);
+    }
 }
