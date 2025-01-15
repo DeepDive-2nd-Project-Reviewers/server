@@ -1,6 +1,8 @@
 package reviewers.server.domain.contents.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
@@ -10,8 +12,6 @@ import reviewers.server.domain.contents.mapper.ContentsMapper;
 import reviewers.server.domain.contents.repository.ContentsRepository;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +26,13 @@ public class ContentsService {
         return contentsMapper.toDto(contentsRepository.save(contents));
     }
 
-    public List<ContentsResponseDto> readAllByCategory(String category) {
-        return contentsRepository.findAllByCategory(category).stream()
-                .map(contentsMapper::toDto)
-                .toList();
+    public Slice<ContentsResponseDto> readAllByCategory(String category, Pageable pageable) {
+        if(category != null && !category.equals("book") && !category.equals("movie")) {
+            throw new BaseErrorException(ErrorType._NOT_FOUND_CATEGORY);
+        }
+
+        Slice<Contents> contents = contentsRepository.findAllByCategory(category, pageable);
+        return contents.map(contentsMapper::toDto);
     }
 
     public ContentsResponseDto readByContentId(Long id) {
