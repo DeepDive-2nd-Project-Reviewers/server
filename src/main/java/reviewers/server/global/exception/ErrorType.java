@@ -18,7 +18,7 @@ public enum ErrorType {
     _NOT_FOUND_USER(BAD_REQUEST, "U4001", "해당 id에 해당하는 User를 찾을 수 없습니다."),
 
     /* ------------------------------- Review -------------------------------------*/
-    _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 User를 찾을 수 없습니다."),
+    _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),
 
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_COMMENT(BAD_REQUEST, "C4001", "해당 id에 해당하는 Comment를 찾을 수 없습니다.");
