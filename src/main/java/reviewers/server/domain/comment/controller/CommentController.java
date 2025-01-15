@@ -3,6 +3,7 @@ package reviewers.server.domain.comment.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,9 +33,14 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findCommentsByReviewId(reviewId));
     }
 
-    // edit comment
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentResponse> editComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
         return ResponseEntity.ok(commentService.updateComment(commentId, commentUpdateRequest));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 }
