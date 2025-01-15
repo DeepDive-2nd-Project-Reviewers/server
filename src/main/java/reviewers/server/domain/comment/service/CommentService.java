@@ -61,7 +61,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         comment.updateContent(newContent);
-
         return commentConverter.toResponse(comment);
     }
+
 }
