@@ -27,6 +27,10 @@ public class ContentsService {
     }
 
     public Slice<ContentsResponseDto> readAllByCategory(String category, Pageable pageable) {
+        if(!category.equals("book") && !category.equals("movie")) {
+            throw new BaseErrorException(ErrorType._NOT_FOUND_CATEGORY);
+        }
+
         Slice<Contents> contents = contentsRepository.findAllByCategory(category, pageable);
         return contents.map(contentsMapper::toDto);
     }
