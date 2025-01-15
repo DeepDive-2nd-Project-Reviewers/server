@@ -1,6 +1,5 @@
 package reviewers.server.domain.contents.controller;
 
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
@@ -24,7 +23,7 @@ public class ContentsController {
     }
 
     @GetMapping
-    public SuccessResponse<List<ContentsResponseDto>> getAll(@PathParam("category") String category) {
+    public SuccessResponse<List<ContentsResponseDto>> getAll(@RequestParam(value = "category", required = false) String category) {
         List<ContentsResponseDto> response = contentsService.readAllByCategory(category);
         return new SuccessResponse<>(response);
     }
