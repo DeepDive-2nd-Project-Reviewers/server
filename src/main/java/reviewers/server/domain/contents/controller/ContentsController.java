@@ -1,13 +1,15 @@
 package reviewers.server.domain.contents.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
 import reviewers.server.domain.contents.dto.ContentsResponseDto;
 import reviewers.server.domain.contents.service.ContentsService;
 import reviewers.server.global.success.SuccessResponse;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,8 +25,9 @@ public class ContentsController {
     }
 
     @GetMapping
-    public SuccessResponse<List<ContentsResponseDto>> getAll(@RequestParam(value = "category", required = false) String category) {
-        List<ContentsResponseDto> response = contentsService.readAllByCategory(category);
+    public SuccessResponse<Slice<ContentsResponseDto>> getAll(@RequestParam(value = "category", required = false) String category,
+                                                              @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        Slice<ContentsResponseDto> response = contentsService.readAllByCategory(category, pageable);
         return new SuccessResponse<>(response);
     }
 
