@@ -22,7 +22,7 @@ public class ActorService {
         Set<String> names = parseNames(actors);
         saveNewActors(names);
         List<Actor> actorsList = findActorsByNames(names);
-        actorAppearancesService.linkActorsToContents(actorsList, contents);
+        actorAppearancesService.saveActorsAndContents(actorsList, contents);
     }
 
     private Set<String> parseNames(String actors) {
@@ -47,5 +47,12 @@ public class ActorService {
 
     private List<Actor> findActorsByNames(Set<String> names) {
         return actorRepository.findByNameIn(names);
+    }
+
+    public String getAllActorsByContents(Contents contents) {
+        List<Actor> actors = actorAppearancesService.getAllActorsByContent(contents);
+        return actors.stream()
+                .map(Actor::getName)
+                .collect(Collectors.joining(", "));
     }
 }

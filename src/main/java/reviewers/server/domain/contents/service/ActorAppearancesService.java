@@ -17,7 +17,7 @@ public class ActorAppearancesService {
 
     private final ActorAppearancesRepository actorAppearancesRepository;
 
-    public void linkActorsToContents(List<Actor> actors, Contents contents) {
+    public void saveActorsAndContents(List<Actor> actors, Contents contents) {
         actors.forEach(actor -> {
             ActorAppearances appearances = ActorAppearances.builder()
                     .actor(actor)
@@ -25,5 +25,9 @@ public class ActorAppearancesService {
                     .build();
             actorAppearancesRepository.save(appearances);
         });
+    }
+
+    public List<Actor> getAllActorsByContent(Contents contents) {
+        return actorAppearancesRepository.findAllActorsByContents(contents);
     }
 }
