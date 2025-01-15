@@ -42,7 +42,7 @@ public class CommentService {
 
     private void checkCommentsEmpty(List<Comment> comments) {
         if(comments.isEmpty()){
-            throw new BaseErrorException(ErrorType._NOT_FOUND_COMMENT);
+            throw new BaseErrorException(ErrorType._EMPTY_COMMENT);
         }
     }
 

@@ -20,8 +20,9 @@ public enum ErrorType {
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),
 
-    /* ------------------------------- Review -------------------------------------*/
-    _NOT_FOUND_COMMENT(BAD_REQUEST, "C4001", "해당 id에 해당하는 Comment를 찾을 수 없습니다.");
+    /* ------------------------------- Comment -------------------------------------*/
+    _NOT_FOUND_COMMENT(BAD_REQUEST, "Cm4001", "해당 id에 해당하는 Comment를 찾을 수 없습니다."),
+    _EMPTY_COMMENT(BAD_REQUEST, "Cm4002", "해당 Review id에 해당하는 Comment를 찾을 수 없습니다.");
 
     private HttpStatus status;
     private String code;
