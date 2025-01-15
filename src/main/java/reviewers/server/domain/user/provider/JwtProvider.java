@@ -36,8 +36,9 @@ public class JwtProvider {
     }
 
     // Refresh Token 생성
-    public String createRefreshToken() {
+    public String createRefreshToken(Long userId) {
         return Jwts.builder()
+                .setSubject(String.valueOf(userId))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -54,13 +55,13 @@ public class JwtProvider {
 
     }
 
-    // 토큰에서 이메일 추출
+    // access 토큰에서 이메일 추출
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    // 토큰에서 권한 추출
+    // access 토큰에서 권한 추출
     public String getRoleFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -69,4 +70,20 @@ public class JwtProvider {
                 .getBody();
         return claims.get("role", String.class);
     }
+
+    // refreshToken 토큰에서 userId 추출
+    public Long getUserIdFromRefreshToken(String refreshToken) {
+        try {
+            String userId = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(refreshToken)
+                    .getBody()
+                    .getSubject();
+            return Long.parseLong(userId);
+        } catch (JwtException e) {
+            throw new JwtException("Invalid Refresh Token");
+        }
+    }
+    
 }
