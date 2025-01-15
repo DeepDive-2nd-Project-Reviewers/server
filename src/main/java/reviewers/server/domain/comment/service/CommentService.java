@@ -46,7 +46,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse createComment(CommentRequest request) {
+    public CommentResponse createComment(Long reviewId, CommentRequest request) {
         User user = findUser(request);
         Review review = findReview(request);
 
