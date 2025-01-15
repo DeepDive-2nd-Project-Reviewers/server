@@ -39,6 +39,12 @@ public class CommentService {
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_COMMENT));
     }
 
+    private void checkCommentsEmpty(List<Comment> comments) {
+        if(comments.isEmpty()){
+            throw new BaseErrorException(ErrorType._NOT_FOUND_COMMENT);
+        }
+    }
+
     @Transactional
     public CommentResponse createComment(CommentRequest request) {
         User user = findUser(request);
@@ -53,9 +59,7 @@ public class CommentService {
     public List<CommentResponse> findCommentsByReviewId(Long reviewId) {
         List<Comment> comments = commentRepository.findByReviewId(reviewId);
 
-        if (comments.isEmpty()) {
-            throw new BaseErrorException(ErrorType._NOT_FOUND_COMMENT);
-        }
+        checkCommentsEmpty(comments);
 
         return comments.stream()
                 .map(commentConverter::toResponse)
