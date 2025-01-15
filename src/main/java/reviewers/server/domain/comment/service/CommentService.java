@@ -27,4 +27,9 @@ public class CommentService {
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 
+    private Review findReview(CommentRequest request) {
+        return reviewRepository.findById(request.getReviewId())
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
+    }
+
 }
