@@ -4,10 +4,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reviewers.server.domain.comment.dto.CommentResponse;
-import reviewers.server.domain.comment.dto.CommentUpdateRequest;
+import reviewers.server.domain.comment.dto.CommentResponseDto;
+import reviewers.server.domain.comment.dto.CommentUpdateRequestDto;
 import reviewers.server.domain.comment.entity.Comment;
-import reviewers.server.domain.comment.dto.CommentRequest;
+import reviewers.server.domain.comment.dto.CommentRequestDto;
 import reviewers.server.domain.comment.repository.CommentRepository;
 import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewInterface;
@@ -25,7 +25,7 @@ public class CommentService {
     private final ReviewInterface reviewRepository;
     private final CommentConverter commentConverter;
 
-    private User findUser(CommentRequest request) {
+    private User findUser(CommentRequestDto request) {
         return userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
@@ -47,7 +47,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse createComment(Long reviewId, CommentRequest request) {
+    public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
         User user = findUser(request);
         Review review = findReview(reviewId);
 
@@ -57,7 +57,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> findCommentsByReviewId(Long reviewId) {
+    public List<CommentResponseDto> findCommentsByReviewId(Long reviewId) {
         List<Comment> comments = commentRepository.findByReviewId(reviewId);
 
         checkCommentsEmpty(comments);
@@ -68,10 +68,10 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse updateComment(Long commentId, CommentUpdateRequest commentUpdateRequest) {
+    public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
         Comment comment = findComment(commentId);
 
-        comment.updateContent(commentUpdateRequest.getContent());
+        comment.updateContent(commentUpdateRequestDto.getContent());
         return commentConverter.toResponse(comment);
     }
 

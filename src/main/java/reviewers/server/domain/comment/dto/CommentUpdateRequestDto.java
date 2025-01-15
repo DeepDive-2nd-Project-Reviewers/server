@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CommentUpdateRequest {
+public class CommentUpdateRequestDto {
 
     @NotBlank(message = "수정할 댓글 내용을 입력해주세요.")
     private String content;
