@@ -29,8 +29,8 @@ public class CommentService {
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 
-    private Review findReview(CommentRequest request) {
-        return reviewRepository.findById(request.getReviewId())
+    private Review findReview(Long reviewId) {
+        return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
     }
 
@@ -48,7 +48,7 @@ public class CommentService {
     @Transactional
     public CommentResponse createComment(Long reviewId, CommentRequest request) {
         User user = findUser(request);
-        Review review = findReview(request);
+        Review review = findReview(reviewId);
 
         Comment comment = commentConverter.toEntity(request, user, review);
         Comment savedComment = commentRepository.save(comment);
