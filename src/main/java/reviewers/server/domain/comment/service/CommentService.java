@@ -51,7 +51,13 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponse> findCommentsByReviewId(Long reviewId) {
-        return commentRepository.findByReviewId(reviewId).stream()
+        List<Comment> comments = commentRepository.findByReviewId(reviewId);
+
+        if (comments.isEmpty()) {
+            throw new BaseErrorException(ErrorType._NOT_FOUND_COMMENT);
+        }
+
+        return comments.stream()
                 .map(commentConverter::toResponse)
                 .toList();
     }
