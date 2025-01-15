@@ -2,6 +2,7 @@ package reviewers.server.domain.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.comment.dto.CommentResponse;
 import reviewers.server.domain.comment.entity.Comment;
 import reviewers.server.domain.comment.dto.CommentRequest;
@@ -31,5 +32,16 @@ public class CommentService {
         return reviewRepository.findById(request.getReviewId())
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
     }
+
+    @Transactional
+    public CommentResponse createComment(CommentRequest request) {
+        User user = findUser(request);
+        Review review = findReview(request);
+
+        Comment comment = commentConverter.toEntity(request, user, review);
+        Comment savedComment = commentRepository.save(comment);
+        return commentConverter.toResponse(savedComment);
+    }
+
 
 }
