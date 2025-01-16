@@ -56,8 +56,10 @@ public class ContentsService {
     }
 
     public void deleteById(Long id) {
-        contentsRepository.findById(id)
+        Contents contents = contentsRepository.findById(id)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+
+        actorAppearancesService.deleteByContents(contents);
         contentsRepository.deleteById(id);
     }
 
