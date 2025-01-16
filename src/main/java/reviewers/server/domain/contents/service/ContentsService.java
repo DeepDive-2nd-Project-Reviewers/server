@@ -26,7 +26,7 @@ public class ContentsService {
     private final FileUploadService fileUploadService;
 
     public ContentsResponseDto create(ContentsRequestDto contentsRequestDto, MultipartFile image) {
-        String url = fileUploadService.upload(image);
+        String url = processImage(image);
         Contents contents = contentsMapper.toEntity(contentsRequestDto, url);
         Contents saved = contentsRepository.save(contents);
         actorService.create(contentsRequestDto.getActor(), saved);
@@ -51,8 +51,7 @@ public class ContentsService {
         Contents content = findById(id);
 
         actorAppearancesService.deleteByContents(content);
-        fileUploadService.deleteImageByUrl(content.getImage());
-        String url = fileUploadService.upload(image);
+        String url = processImage(content.getImage(), image);
         content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), url);
         actorService.create(request.getActor(), content);
         return toDto(contentsRepository.save(content));
@@ -72,5 +71,19 @@ public class ContentsService {
     public Contents findById(Long id) {
         return contentsRepository.findById(id)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+    }
+
+    private String processImage(MultipartFile image) {
+        if(image != null) {
+            return fileUploadService.upload(image);
+        }
+        return null;
+    }
+
+    private String processImage(String url, MultipartFile image) {
+        if(url != null && !url.isEmpty()) {
+            fileUploadService.deleteImageByUrl(url);
+        }
+        return processImage(image);
     }
 }
