@@ -2,6 +2,7 @@ package reviewers.server.domain.heart.content.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.repository.ContentsRepository;
 import reviewers.server.domain.heart.content.dto.ContentHeartRequestDto;
@@ -14,11 +15,12 @@ import reviewers.server.global.exception.ErrorType;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ContentHeartService {
 
-    private ContentHeartRepository contentHeartRepository;
-    private UserRepository userRepository;
-    private ContentsRepository contentsRepository;
+    private final ContentHeartRepository contentHeartRepository;
+    private final UserRepository userRepository;
+    private final ContentsRepository contentsRepository;
 
     private User findUser(ContentHeartRequestDto request) {
         return userRepository.findById(request.getUserId())
@@ -66,6 +68,7 @@ public class ContentHeartService {
         content.subtractHeartCount();
     }
 
+    @Transactional(readOnly = true)
     public Long getHeartCount(Long contentId) {
         Contents content = findContent(contentId);
         return content.getHeartCount();
