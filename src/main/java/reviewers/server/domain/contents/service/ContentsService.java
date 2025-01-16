@@ -21,6 +21,7 @@ public class ContentsService {
     private final ContentsRepository contentsRepository;
     private final ContentsMapper contentsMapper;
     private final ActorService actorService;
+    private final ActorAppearancesService actorAppearancesService;
 
     public ContentsResponseDto create(ContentsRequestDto contentsRequestDto) {
         Contents contents = contentsMapper.toEntity(contentsRequestDto);
@@ -48,7 +49,9 @@ public class ContentsService {
         Contents content = contentsRepository.findById(id)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
 
+        actorAppearancesService.deleteByContents(content);
         content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
+        actorService.create(request.getActor(), content);
         return toDto(contentsRepository.save(content));
     }
 

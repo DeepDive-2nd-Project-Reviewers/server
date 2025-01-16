@@ -30,4 +30,8 @@ public class ActorAppearancesService {
     public List<Actor> getAllActorsByContent(Contents contents) {
         return actorAppearancesRepository.findAllActorsByContents(contents);
     }
+
+    public void deleteByContents(Contents contents) {
+        actorAppearancesRepository.deleteAllByContents(contents);
+    }
 }

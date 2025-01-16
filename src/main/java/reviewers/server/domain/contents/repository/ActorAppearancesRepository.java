@@ -12,4 +12,6 @@ import java.util.List;
 public interface ActorAppearancesRepository extends JpaRepository<ActorAppearances, Long> {
     @Query("SELECT a.actor FROM ActorAppearances a WHERE a.contents = :contents")
     List<Actor> findAllActorsByContents(@Param("contents") Contents contents);
+
+    void deleteAllByContents(Contents contents);
 }
