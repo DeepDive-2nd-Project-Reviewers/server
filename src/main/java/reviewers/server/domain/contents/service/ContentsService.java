@@ -40,14 +40,12 @@ public class ContentsService {
     }
 
     public ContentsResponseDto readByContentId(Long id) {
-        Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+        Contents content = findById(id);
         return toDto(content);
     }
 
     public ContentsResponseDto update(Long id, ContentsRequestDto request) {
-        Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+        Contents content = findById(id);
 
         actorAppearancesService.deleteByContents(content);
         content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
@@ -56,9 +54,7 @@ public class ContentsService {
     }
 
     public void deleteById(Long id) {
-        Contents contents = contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
-
+        Contents contents = findById(id);
         actorAppearancesService.deleteByContents(contents);
         contentsRepository.deleteById(id);
     }
@@ -66,5 +62,10 @@ public class ContentsService {
     private ContentsResponseDto toDto(Contents contents) {
         String actors = actorService.getAllActorsByContents(contents);
         return contentsMapper.toDto(contents, actors);
+    }
+
+    private Contents findById(Long id) {
+        return contentsRepository.findById(id)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 }
