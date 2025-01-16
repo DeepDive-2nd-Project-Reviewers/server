@@ -38,4 +38,7 @@ public class SignUpRequestDto {
     @NotNull(message = "필수 항목을 확인 하세요.")
     private String role;
 
+    @NotBlank
+    private String certificationNumber;
+
 }
