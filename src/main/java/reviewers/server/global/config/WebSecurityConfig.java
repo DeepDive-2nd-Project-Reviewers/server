@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
 import reviewers.server.domain.user.provider.JwtProvider;
 
@@ -17,6 +18,7 @@ import reviewers.server.domain.user.provider.JwtProvider;
 public class WebSecurityConfig {
 
     private final JwtProvider jwtProvider;
+    private final OAuth2UserCustomService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,8 +31,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/contents/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                        .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfoEndpointConfig ->
+                                userInfoEndpointConfig.userService(userDetailsService))
+                        .defaultSuccessUrl("/api/v1/loginSuccess", true) // 로그인 성공 시 리다이렉트 URL
+                        .permitAll()
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
-
