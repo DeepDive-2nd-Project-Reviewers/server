@@ -8,7 +8,4 @@ public class ContentHeartRequestDto {
 
     @NotBlank
     private Long userId;
-
-    @NotBlank
-    private Long contentId;
 }

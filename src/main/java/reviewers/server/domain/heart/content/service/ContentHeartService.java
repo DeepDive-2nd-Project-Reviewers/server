@@ -25,8 +25,8 @@ public class ContentHeartService {
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
     }
 
-    private Contents findContent(ContentHeartRequestDto request) {
-        return contentsRepository.findById(request.getContentId())
+    private Contents findContent(Long contentId) {
+        return contentsRepository.findById(contentId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 
@@ -42,9 +42,9 @@ public class ContentHeartService {
         }
     }
 
-    public void createHeart(ContentHeartRequestDto request) {
+    public void createHeart(Long contentId, ContentHeartRequestDto request) {
         User user = findUser(request);
-        Contents content = findContent(request);
+        Contents content = findContent(contentId);
 
         checkIfAlreadyLiked(user, content);
 
@@ -56,13 +56,18 @@ public class ContentHeartService {
         content.addHeartCount();
     }
 
-    public void deleteHeart(ContentHeartRequestDto request) {
+    public void deleteHeart(Long contentId, ContentHeartRequestDto request) {
         User user = findUser(request);
-        Contents content = findContent(request);
+        Contents content = findContent(contentId);
 
         checkIfNotLiked(user, content);
 
         contentHeartRepository.deleteByUserAndContent(user, content);
         content.subtractHeartCount();
+    }
+
+    public Long getHeartCount(Long contentId) {
+        Contents content = findContent(contentId);
+        return content.getHeartCount();
     }
 }
