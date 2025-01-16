@@ -21,26 +21,26 @@ public class Review extends BaseEntity {
 
     private String title;
     private String content;
-    private Long starCount;
     private Long heartCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contents_id", nullable = false)
     private Contents contents;
 
     @Builder
     public Review(ReviewRequestDto reviewRequestDto, Long count) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
-        this.starCount = count;
+        this.heartCount = count;
     }
 
     public void updateReview(ReviewRequestDto reviewRequestDto, Long count) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
-        this.starCount = count;
+        this.heartCount = count;
     }
 
     public void addHeartCount() {

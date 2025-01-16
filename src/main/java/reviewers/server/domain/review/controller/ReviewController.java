@@ -3,10 +3,13 @@ package reviewers.server.domain.review.controller;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import reviewers.server.domain.review.dto.ReviewDetailResponseDto;
 import reviewers.server.domain.review.dto.ReviewRequestDto;
+import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.service.ReviewService;
 import reviewers.server.global.success.SuccessResponse;
 
@@ -25,11 +28,17 @@ public class ReviewController {
     }
 
     @GetMapping("/{contentsId}")
-    public SuccessResponse getAllReviews(@PathVariable Long contentsId,
-                                         @PageableDefault(sort = "id", size = 8) Pageable pageable){
+    public SuccessResponse<Page<ReviewResponseDto>> getAllReviews(@PathVariable Long contentsId,
+                                                                  @PageableDefault(sort = "id", size = 8) Pageable pageable){
 
-        reviewService.getAllReview(contentsId);
-        return new SuccessResponse("All reviews");
+        return new SuccessResponse<>(reviewService.getAllReview(contentsId, pageable));
+    }
+
+    @GetMapping("/{contentsId}/{reviewId}")
+    public SuccessResponse<ReviewDetailResponseDto> getReview(@PathVariable Long contentsId,
+                                                              @PathVariable Long reviewId){
+
+        return new SuccessResponse<>(reviewService.getReview(contentsId, reviewId));
     }
 
     @PutMapping("/{contentsId}/{reviewId}")

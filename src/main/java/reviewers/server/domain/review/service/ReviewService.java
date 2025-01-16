@@ -2,11 +2,15 @@ package reviewers.server.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.repository.ContentsRepository;
+import reviewers.server.domain.review.dto.ReviewDetailResponseDto;
 import reviewers.server.domain.review.dto.ReviewRequestDto;
 import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.entity.Review;
@@ -31,11 +35,23 @@ public class ReviewService {
         reviewRepository.save(result);
     }
 
-    public void getAllReview(Long contentsId) {
+    @Transactional(readOnly = true)
+    public Page<ReviewResponseDto> getAllReview(Long contentsId, Pageable pageable) {
         Contents contents = checkIfContentsExists(contentsId);
-        List<Review> reviews = reviewRepository.findAllByContents(contents);
-        log.info("size: {}", reviews.size());
+        List<Review> reviews = reviewRepository.findAllByContents(contents, pageable);
+        List<ReviewResponseDto> result = reviews.stream()
+                .map(review -> new ReviewResponseDto(review.getId(), review.getTitle(), review.getUpdatedAt())).toList();
 
+        log.info("size: {}", reviews.size());
+        return new PageImpl<>(result, pageable, reviews.size());
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewDetailResponseDto getReview(Long contentsId, Long reviewId) {
+        checkIfContentsExists(contentsId);
+        Review review = checkIfReviewExist(reviewId);
+
+        return new ReviewDetailResponseDto(review);
     }
 
     @Transactional
