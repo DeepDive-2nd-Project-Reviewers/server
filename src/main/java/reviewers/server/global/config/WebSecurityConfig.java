@@ -23,7 +23,11 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/v1/user/**").permitAll()
+                        .requestMatchers("/", "/api/v1/user/**",
+                                "/favicon.ico"
+                                ,"/swagger-ui/**"
+                                ,"/v3/api-docs/**"
+                                ,"/error").permitAll()
                         .requestMatchers("/api/v1/comments/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/contents/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/contents/**").hasRole("ADMIN")
