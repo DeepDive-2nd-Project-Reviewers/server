@@ -18,4 +18,13 @@ public class Review {
     private String title;
     private String content;
     private Long starCount;
+    private long heartCount;
+
+    public void addHeartCount() {
+        this.heartCount++;
+    }
+
+    public void subtractHeartCount() {
+        this.heartCount--;
+    }
 }
