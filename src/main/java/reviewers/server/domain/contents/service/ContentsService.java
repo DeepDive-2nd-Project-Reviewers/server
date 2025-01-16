@@ -20,10 +20,14 @@ public class ContentsService {
 
     private final ContentsRepository contentsRepository;
     private final ContentsMapper contentsMapper;
+    private final ActorService actorService;
+    private final ActorAppearancesService actorAppearancesService;
 
     public ContentsResponseDto create(ContentsRequestDto contentsRequestDto) {
         Contents contents = contentsMapper.toEntity(contentsRequestDto);
-        return contentsMapper.toDto(contentsRepository.save(contents));
+        Contents saved = contentsRepository.save(contents);
+        actorService.create(contentsRequestDto.getActor(), saved);
+        return toDto(saved);
     }
 
     public Slice<ContentsResponseDto> readAllByCategory(String category, Pageable pageable) {
@@ -32,28 +36,36 @@ public class ContentsService {
         }
 
         Slice<Contents> contents = contentsRepository.findAllByCategory(category, pageable);
-        return contents.map(contentsMapper::toDto);
+        return contents.map(this::toDto);
     }
 
     public ContentsResponseDto readByContentId(Long id) {
-        Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
-
-        return contentsMapper.toDto(content);
+        Contents content = findById(id);
+        return toDto(content);
     }
 
     public ContentsResponseDto update(Long id, ContentsRequestDto request) {
-        Contents content = contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+        Contents content = findById(id);
 
+        actorAppearancesService.deleteByContents(content);
         content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
-
-        return contentsMapper.toDto(content);
+        actorService.create(request.getActor(), content);
+        return toDto(contentsRepository.save(content));
     }
 
     public void deleteById(Long id) {
-        contentsRepository.findById(id)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+        Contents contents = findById(id);
+        actorAppearancesService.deleteByContents(contents);
         contentsRepository.deleteById(id);
+    }
+
+    private ContentsResponseDto toDto(Contents contents) {
+        String actors = actorService.getAllActorsByContents(contents);
+        return contentsMapper.toDto(contents, actors);
+    }
+
+    private Contents findById(Long id) {
+        return contentsRepository.findById(id)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 }
