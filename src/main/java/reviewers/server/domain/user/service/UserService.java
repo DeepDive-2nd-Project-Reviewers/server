@@ -1,22 +1,19 @@
 package reviewers.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import reviewers.server.domain.user.dto.request.LogoutRequestDto;
-import reviewers.server.domain.user.dto.request.RefreshAccessTokenRequestDto;
-import reviewers.server.domain.user.dto.request.SignInRequestDto;
-import reviewers.server.domain.user.dto.request.SignUpRequestDto;
+import reviewers.server.domain.user.dto.request.*;
+import reviewers.server.domain.user.dto.response.LogoutResponseDto;
 import reviewers.server.domain.user.dto.response.RefreshAccessTokenResponseDto;
 import reviewers.server.domain.user.dto.response.SignInResponseDto;
 import reviewers.server.domain.user.dto.response.SignUpResponseDto;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.provider.JwtProvider;
 import reviewers.server.domain.user.repository.UserRepository;
-import reviewers.server.global.success.SuccessResponse;
+import reviewers.server.global.exception.BaseErrorException;
+import reviewers.server.global.exception.ErrorType;
 
 import java.time.LocalDate;
 
@@ -26,76 +23,94 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final EmailService emailService;
+    private final RedisService redisService;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public ResponseEntity<?> signUp(SignUpRequestDto requestDto){
-        try{
+    public SignUpResponseDto signUp(SignUpRequestDto requestDto) {
 
-            String email = requestDto.getEmail();
-            boolean isExistEmail = userRepository.existsByEmail(email);
-            if(isExistEmail) return ResponseEntity.badRequest().body(new SignUpResponseDto(null, "중복된 이메일입니다."));
-
-            String password = requestDto.getPassword();
-            String encodedPassword = passwordEncoder.encode(password);
-
-            String username = requestDto.getUsername();
-            boolean isExistUsername = userRepository.existsByUsername(username);
-            if(isExistUsername) return ResponseEntity.badRequest().body(new SignUpResponseDto(null, "중복된 닉네임입니다."));
-
-            LocalDate birth = requestDto.getBirth();
-
-            String role = requestDto.getRole();
-
-            User user = new User(email, encodedPassword, username, birth, role);
-            userRepository.save(user);
-
-            return ResponseEntity.ok(new SignUpResponseDto(user.getUserId(), "가입 성공"));
-
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(new SignUpResponseDto(null, "서버 오류 발생"));
+        // 이메일 중복 검증
+        String email = requestDto.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new BaseErrorException(ErrorType._DUPLICATED_EMAIL);
         }
+
+        // 이메일 인증 검증
+        if (!emailService.checkCertificationNumber(new CheckCertificationRequestDto(requestDto.getEmail(), requestDto.getCertificationNumber()))) {
+            throw new BaseErrorException(ErrorType._INVALID_CERTIFICATION_CODE);
+        }
+
+        String password = requestDto.getPassword();
+        String encodedPassword = passwordEncoder.encode(password);
+
+        //닉네임 중복 검증
+        String username = requestDto.getUsername();
+        if(userRepository.existsByUsername(username)) {
+            throw new BaseErrorException(ErrorType._DUPLICATED_NICKNAME);
+        }
+
+        LocalDate birth = requestDto.getBirth();
+
+        String role = requestDto.getRole();
+
+        User user = new User(email, encodedPassword, username, birth, role);
+        userRepository.save(user);
+
+        return new SignUpResponseDto(user.getUserId(), "가입 성공");
     }
 
-    public ResponseEntity<?> signIn(SignInRequestDto requestDto){
+    public SignInResponseDto signIn(SignInRequestDto requestDto){
 
-        User user = userRepository.findByEmail(requestDto.getEmail());
-        if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입된 이메일이 아닙니다.");
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
 
         String password = requestDto.getPassword();
         String encodedPassword = user.getPassword();
         boolean isMatched = passwordEncoder.matches(password, encodedPassword);
-        if(!isMatched) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀 번호가 다릅니다.");
+        if(!isMatched){
+            throw new BaseErrorException(ErrorType._INVALID_PASSWORD);
+        }
 
         // JWT 토큰 생성
         String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
         int expiredTime = 3600; // 1시간
 
+        redisService.setToken(String.valueOf(user.getUserId()), refreshToken);
+
         // DTO 반환
-        return ResponseEntity.ok(new SignInResponseDto(accessToken, refreshToken, expiredTime, user.getUserId()));
+        return new SignInResponseDto(accessToken, refreshToken, expiredTime, user.getUserId());
     }
 
-    public ResponseEntity<?> regenAccessToken(RefreshAccessTokenRequestDto requestDto){
-        String refreshToken = requestDto.getRefreshToken();
-        Long userId = jwtProvider.getUserIdFromRefreshToken(refreshToken);
+    public RefreshAccessTokenResponseDto regenAccessToken(RefreshAccessTokenRequestDto requestDto) {
 
-        User user = userRepository.findByUserId(userId);
+        String refreshToken = requestDto.getRefreshToken();
+
+        Long userId = jwtProvider.getUserIdFromRefreshToken(refreshToken);
+        boolean isMatched = refreshToken.equals(redisService.getToken(String.valueOf(userId)));
+        if(!isMatched) throw new BaseErrorException(ErrorType._INVALID_TOKEN);
+
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
 
         String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole());
         int expiredTime = 3600;
 
-        return ResponseEntity.ok(new RefreshAccessTokenResponseDto(accessToken, expiredTime));
-    }
-
-
-    public ResponseEntity<?> logout(LogoutRequestDto requestDto) {
-
-        // 로그아웃시 Token 폐기 어떻게 할지 정해야함
-        return ResponseEntity.ok(SuccessResponse.ok("로그아웃 성공"));
+        return new RefreshAccessTokenResponseDto(accessToken, expiredTime);
 
     }
 
+
+    public LogoutResponseDto logout(LogoutRequestDto requestDto) {
+
+        redisService.blackListAccesToken(requestDto.getAccessToken());
+
+        Long userId = jwtProvider.getUserIdFromRefreshToken(requestDto.getRefreshToken());
+        redisService.deleteRefreshToken(String.valueOf(userId));
+
+        return new LogoutResponseDto("로그아웃 성공");
+    }
 
 }
