@@ -1,6 +1,5 @@
 package reviewers.server.domain.oauth.dto;
 
-import java.io.Serializable;
 import java.util.Map;
 
 public class GoogleResponse implements OAuth2Response {
