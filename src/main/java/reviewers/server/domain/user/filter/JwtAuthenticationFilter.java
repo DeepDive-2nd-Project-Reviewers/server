@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (requestURI.startsWith("/api/v1/")) {
+        if (requestURI.startsWith("/api/v1/") || requestURI.startsWith("/login")) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }

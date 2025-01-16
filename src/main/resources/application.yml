@@ -13,6 +13,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  profiles:
+    include: oauth
+
   mail:
     host: smtp.naver.com
     port: 465
@@ -26,8 +29,9 @@ spring:
     redis:
       host: localhost
       port: 6379
-      
+
 logging.level:
+  org.springframework.security: debug
   org.hibernate.SQL: debug
 
 jwt:

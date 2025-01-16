@@ -1,6 +1,7 @@
 package reviewers.server.domain.user.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,11 +22,17 @@ public class User {
     private LocalDate birth;
     private String role;
 
+    @Builder
     public User(String email, String encodedPassword, String username, LocalDate birth, String role) {
         this.email = email;
         this.password = encodedPassword;
         this.username = username;
         this.birth = birth;
         this.role = role;
+    }
+
+    public User update(String username) {
+        this.username = username;
+        return this;
     }
 }
