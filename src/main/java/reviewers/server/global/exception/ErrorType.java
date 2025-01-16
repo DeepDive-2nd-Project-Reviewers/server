@@ -26,7 +26,8 @@ public enum ErrorType {
     _EMPTY_COMMENT(BAD_REQUEST, "Cm4002", "해당 Review id에 해당하는 Comment를 찾을 수 없습니다."),
 
     /* ------------------------------- Heart -------------------------------------*/
-    _ALREADY_LIKE(BAD_REQUEST, "H4001", "이미 좋아요를 누른 컨텐츠입니다.");
+    _ALREADY_LIKE(BAD_REQUEST, "H4001", "이미 좋아요를 누른 컨텐츠입니다."),
+    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않은 컨텐츠입니다.");
 
     private HttpStatus status;
     private String code;

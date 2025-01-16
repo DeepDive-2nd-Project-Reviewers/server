@@ -36,6 +36,12 @@ public class ContentHeartService {
         }
     }
 
+    private void checkIfNotLiked(User user, Contents content) {
+        if (!contentHeartRepository.existsByUserAndContent(user, content)) {
+            throw new BaseErrorException(ErrorType._NOT_LIKE);
+        }
+    }
+
     public void createLike(ContentHeartRequestDto request) {
         User user = findUser(request);
         Contents content = findContent(request);
@@ -47,5 +53,14 @@ public class ContentHeartService {
                 .content(content)
                 .build();
         contentHeartRepository.save(contentHeart);
+    }
+
+    public void deleteLike(ContentHeartRequestDto request) {
+        User user = findUser(request);
+        Contents content = findContent(request);
+
+        checkIfNotLiked(user, content);
+
+        contentHeartRepository.deleteByUserAndContent(user, content);
     }
 }
