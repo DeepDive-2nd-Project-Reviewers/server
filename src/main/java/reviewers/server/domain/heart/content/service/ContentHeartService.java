@@ -64,10 +64,4 @@ public class ContentHeartService {
         contentHeartRepository.deleteByUserAndContent(user, content);
         content.subtractHeartCount();
     }
-
-    @Transactional(readOnly = true)
-    public Long getHeartCount(Long contentId) {
-        Contents content = findContent(contentId);
-        return content.getHeartCount();
-    }
 }

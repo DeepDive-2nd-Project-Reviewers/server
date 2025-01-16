@@ -19,12 +19,6 @@ public class ContentHeartController {
 
     private final ContentHeartService heartService;
 
-    @GetMapping("/contents/{contentId}/hearts")
-    public SuccessResponse<Long> getContentHearts(@PathVariable Long contentId) {
-        long heartCount = heartService.getHeartCount(contentId);
-        return new SuccessResponse<>(heartCount);
-    }
-
     @PostMapping("/contents/{contentId}/hearts")
     public SuccessResponse<Void> createHeart(@PathVariable Long contentId, @RequestBody ContentHeartRequestDto requestDto) {
         heartService.createHeart(contentId, requestDto);
