@@ -64,7 +64,7 @@ public class ContentsService {
         return contentsMapper.toDto(contents, actors);
     }
 
-    private Contents findById(Long id) {
+    public Contents findById(Long id) {
         return contentsRepository.findById(id)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.repository.ContentsRepository;
+import reviewers.server.domain.contents.service.ContentsService;
 import reviewers.server.domain.heart.content.dto.ContentHeartRequestDto;
 import reviewers.server.domain.heart.content.entity.ContentHeart;
 import reviewers.server.domain.heart.content.repository.ContentHeartRepository;
@@ -21,15 +22,11 @@ public class ContentHeartService {
     private final ContentHeartRepository contentHeartRepository;
     private final UserRepository userRepository;
     private final ContentsRepository contentsRepository;
+    private final ContentsService contentsService;
 
     private User findUser(ContentHeartRequestDto request) {
         return userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
-    }
-
-    private Contents findContent(Long contentId) {
-        return contentsRepository.findById(contentId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 
     private void checkIfAlreadyLiked(User user, Contents content) {
@@ -46,7 +43,7 @@ public class ContentHeartService {
 
     public void createHeart(Long contentId, ContentHeartRequestDto request) {
         User user = findUser(request);
-        Contents content = findContent(contentId);
+        Contents content = contentsService.findById(contentId);
 
         checkIfAlreadyLiked(user, content);
 
@@ -60,7 +57,7 @@ public class ContentHeartService {
 
     public void deleteHeart(Long contentId, ContentHeartRequestDto request) {
         User user = findUser(request);
-        Contents content = findContent(contentId);
+        Contents content = contentsService.findById(contentId);
 
         checkIfNotLiked(user, content);
 
