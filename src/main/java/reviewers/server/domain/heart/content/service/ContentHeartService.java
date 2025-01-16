@@ -42,7 +42,7 @@ public class ContentHeartService {
         }
     }
 
-    public void createLike(ContentHeartRequestDto request) {
+    public void createHeart(ContentHeartRequestDto request) {
         User user = findUser(request);
         Contents content = findContent(request);
 
@@ -56,7 +56,7 @@ public class ContentHeartService {
         content.addHeartCount();
     }
 
-    public void deleteLike(ContentHeartRequestDto request) {
+    public void deleteHeart(ContentHeartRequestDto request) {
         User user = findUser(request);
         Contents content = findContent(request);
 
