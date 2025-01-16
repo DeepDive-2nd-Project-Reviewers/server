@@ -33,4 +33,12 @@ public class Contents {
         this.summary = summary;
         this.image = image;
     }
+
+    public void addHeartCount() {
+        this.heartCount++;
+    }
+
+    public void subtractHeartCount() {
+        this.heartCount--;
+    }
 }

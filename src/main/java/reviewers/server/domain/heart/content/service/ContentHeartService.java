@@ -53,6 +53,7 @@ public class ContentHeartService {
                 .content(content)
                 .build();
         contentHeartRepository.save(contentHeart);
+        content.addHeartCount();
     }
 
     public void deleteLike(ContentHeartRequestDto request) {
@@ -62,5 +63,6 @@ public class ContentHeartService {
         checkIfNotLiked(user, content);
 
         contentHeartRepository.deleteByUserAndContent(user, content);
+        content.subtractHeartCount();
     }
 }
