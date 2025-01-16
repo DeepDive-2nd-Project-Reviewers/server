@@ -1,15 +1,19 @@
 package reviewers.server.domain.review.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import reviewers.server.domain.contents.entity.Contents;
+import reviewers.server.domain.review.dto.ReviewRequestDto;
+import reviewers.server.domain.user.entity.User;
+import reviewers.server.global.common.BaseEntity;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +22,23 @@ public class Review {
     private String title;
     private String content;
     private Long starCount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Contents contents;
+
+    @Builder
+    public Review(ReviewRequestDto reviewRequestDto, Long count) {
+        this.title = reviewRequestDto.getTitle();
+        this.content = reviewRequestDto.getContent();
+        this.starCount = count;
+    }
+
+    public void updateReview(ReviewRequestDto reviewRequestDto, Long count) {
+        this.title = reviewRequestDto.getTitle();
+        this.content = reviewRequestDto.getContent();
+        this.starCount = count;
+    }
 }

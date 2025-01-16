@@ -3,6 +3,10 @@ package reviewers.server.domain.contents.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import reviewers.server.domain.review.entity.Review;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -25,6 +29,9 @@ public class Contents {
     private String image;
 
     private long heartCount;
+
+    @OneToMany
+    private List<Review> reviews = new ArrayList<>();
 
     public void updateContents(String category, String title, String writer, String summary, String image) {
         this.category = category;
