@@ -17,7 +17,7 @@ public class ContentsMapper {
                 .build();
     }
 
-    public ContentsResponseDto toDto(Contents contents){
+    public ContentsResponseDto toDto(Contents contents, String actors){
         return ContentsResponseDto.builder()
                 .contentId(contents.getId())
                 .category(contents.getCategory())
@@ -25,6 +25,8 @@ public class ContentsMapper {
                 .writer(contents.getWriter())
                 .summary(contents.getSummary())
                 .image(contents.getImage())
+                .actor(actors)
+                .heartCount(contents.getHeartCount())
                 .build();
     }
 }
