@@ -60,7 +60,7 @@ public class UserService {
 
     public ResponseEntity<?> signIn(SignInRequestDto requestDto){
 
-        User user = userRepository.findByEmail(requestDto.getEmail());
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElse(null);
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입된 이메일이 아닙니다.");
 
         String password = requestDto.getPassword();
