@@ -1,6 +1,7 @@
 package reviewers.server.domain.oauth.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,7 +15,7 @@ import reviewers.server.domain.user.repository.UserRepository;
 
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OAuth2UserCustomService extends DefaultOAuth2UserService {
@@ -37,23 +38,19 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
         String username = oAuth2Response.getName(); // 구글 이름 (ex. 노현이)
         String email = oAuth2Response.getEmail();
-        String role = "ROLE_USER";
+        String role = "USER";
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {  // 처음 로그인하는 경우 (새 회원)
-            User user = User.builder()
-                    .username(username)
-                    .email(email)
-                    .role(role)
-                    .build();
+            User user = new User(email, username);
 
-            System.out.println("처음 로그인합니다.");
+            log.info("처음 로그인합니다.");
             userRepository.save(user);
         } else {  // 이전에 로그인한 경우 (기존 회원)
             User existData = optionalUser.get();
             existData.update(username);
-            System.out.println("이전에 로그인했습니다.");
+            log.info("이전에 로그인했습니다.");
             userRepository.save(existData);
         }
 

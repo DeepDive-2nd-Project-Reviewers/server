@@ -1,6 +1,7 @@
 package reviewers.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import reviewers.server.global.exception.ErrorType;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -52,9 +54,7 @@ public class UserService {
 
         LocalDate birth = requestDto.getBirth();
 
-        String role = requestDto.getRole();
-
-        User user = new User(email, encodedPassword, username, birth, role);
+        User user = new User(email, encodedPassword, username, birth);
         userRepository.save(user);
 
         return new SignUpResponseDto(user.getUserId(), "가입 성공");
@@ -73,7 +73,8 @@ public class UserService {
         }
 
         // JWT 토큰 생성
-        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole());
+        log.info("role: {}", user.getRole());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole().name());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
         int expiredTime = 3600; // 1시간
 
@@ -95,7 +96,7 @@ public class UserService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
 
-        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole());
+        String accessToken = jwtProvider.createAccessToken(user.getEmail(), String.valueOf(user.getRole()));
         int expiredTime = 3600;
 
         return new RefreshAccessTokenResponseDto(accessToken, expiredTime);

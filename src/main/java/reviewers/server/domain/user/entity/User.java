@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+
 @Getter
 @NoArgsConstructor
 @Entity(name = "user")
@@ -25,12 +26,18 @@ public class User {
     private Role role;
 
     @Builder
-    public User(String email, String encodedPassword, String username, LocalDate birth, String role) {
+    public User(String email, String encodedPassword, String username, LocalDate birth) {
         this.email = email;
         this.password = encodedPassword;
         this.username = username;
         this.birth = birth;
-        this.role = role;
+        this.role = Role.USER;
+    }
+
+    public User(String email, String encodedPassword){
+        this.email = email;
+        this.password = encodedPassword;
+        this.role = Role.USER;
     }
 
     public User update(String username) {
