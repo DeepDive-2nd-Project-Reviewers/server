@@ -26,6 +26,7 @@ public class ContentsMapper {
                 .summary(contents.getSummary())
                 .image(contents.getImage())
                 .actor(actors)
+                .heartCount(contents.getHeartCount())
                 .build();
     }
 }

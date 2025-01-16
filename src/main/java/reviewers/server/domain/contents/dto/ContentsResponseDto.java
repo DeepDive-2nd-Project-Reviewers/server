@@ -19,4 +19,6 @@ public class ContentsResponseDto {
     private String image;
 
     private String actor;
+
+    private long heartCount;
 }
