@@ -20,7 +20,9 @@ public class User {
     private String password;
     private String username;
     private LocalDate birth;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Builder
     public User(String email, String encodedPassword, String username, LocalDate birth, String role) {
