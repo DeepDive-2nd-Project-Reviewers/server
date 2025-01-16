@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
 import reviewers.server.domain.contents.dto.ContentsResponseDto;
 import reviewers.server.domain.contents.entity.Contents;
@@ -22,9 +23,11 @@ public class ContentsService {
     private final ContentsMapper contentsMapper;
     private final ActorService actorService;
     private final ActorAppearancesService actorAppearancesService;
+    private final FileUploadService fileUploadService;
 
-    public ContentsResponseDto create(ContentsRequestDto contentsRequestDto) {
-        Contents contents = contentsMapper.toEntity(contentsRequestDto);
+    public ContentsResponseDto create(ContentsRequestDto contentsRequestDto, MultipartFile image) {
+        String url = fileUploadService.upload(image);
+        Contents contents = contentsMapper.toEntity(contentsRequestDto, url);
         Contents saved = contentsRepository.save(contents);
         actorService.create(contentsRequestDto.getActor(), saved);
         return toDto(saved);
@@ -48,7 +51,7 @@ public class ContentsService {
         Contents content = findById(id);
 
         actorAppearancesService.deleteByContents(content);
-        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), request.getImage());
+        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary());
         actorService.create(request.getActor(), content);
         return toDto(contentsRepository.save(content));
     }

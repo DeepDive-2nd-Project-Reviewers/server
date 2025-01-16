@@ -26,12 +26,11 @@ public class Contents {
 
     private long heartCount;
 
-    public void updateContents(String category, String title, String writer, String summary, String image) {
+    public void updateContents(String category, String title, String writer, String summary) {
         this.category = category;
         this.title = title;
         this.writer = writer;
         this.summary = summary;
-        this.image = image;
     }
 
     public void addHeartCount() {

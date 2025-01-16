@@ -7,13 +7,13 @@ import reviewers.server.domain.contents.entity.Contents;
 
 @Component
 public class ContentsMapper {
-    public Contents toEntity(ContentsRequestDto dto){
+    public Contents toEntity(ContentsRequestDto dto, String image){
         return Contents.builder()
                 .category(dto.getCategory())
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
                 .summary(dto.getSummary())
-                .image(dto.getImage())
+                .image(image)
                 .build();
     }
 

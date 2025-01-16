@@ -41,7 +41,13 @@ public enum ErrorType {
 
     /* ------------------------------- Heart -------------------------------------*/
     _ALREADY_LIKE(BAD_REQUEST, "H4001", "이미 좋아요를 누른 컨텐츠입니다."),
-    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않은 컨텐츠입니다.");
+    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않은 컨텐츠입니다."),
+
+    /* ------------------------------- IMAGE -------------------------------------*/
+    _NULL_IMAGE(BAD_REQUEST, "I4001", "이미지가 존재하지 않습니다."),
+    _NO_EXTENSION(BAD_REQUEST, "I4002", "확장자가 누락되었습니다."),
+    _INVALID_FILE_EXTENSION(BAD_REQUEST, "I4003", "지원하지 않는 확장자 입니다."),
+    _IO_EXCEPTION_ON_UPLOAD(BAD_REQUEST, "I4004", "파일 업로드에 실패하였습니다.");
 
     private HttpStatus status;
     private String code;

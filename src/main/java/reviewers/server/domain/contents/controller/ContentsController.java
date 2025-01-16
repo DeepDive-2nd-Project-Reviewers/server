@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
 import reviewers.server.domain.contents.dto.ContentsResponseDto;
 import reviewers.server.domain.contents.service.ContentsService;
@@ -19,8 +20,9 @@ public class ContentsController {
     private final ContentsService contentsService;
 
     @PostMapping
-    public SuccessResponse<ContentsResponseDto> create(@RequestBody ContentsRequestDto dto){
-        ContentsResponseDto response = contentsService.create(dto);
+    public SuccessResponse<ContentsResponseDto> create(@RequestPart("dto") ContentsRequestDto dto,
+                                                       @RequestPart(value = "image", required = false) MultipartFile image){
+        ContentsResponseDto response = contentsService.create(dto, image);
         return new SuccessResponse<>(response);
     }
 
