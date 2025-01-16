@@ -27,6 +27,8 @@ public class ContentsMapper {
                 .image(contents.getImage())
                 .actor(actors)
                 .heartCount(contents.getHeartCount())
+                .createdAt(contents.getCreatedAt())
+                .updatedAt(contents.getUpdatedAt())
                 .build();
     }
 }

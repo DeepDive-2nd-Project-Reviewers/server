@@ -3,13 +3,14 @@ package reviewers.server.domain.contents.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import reviewers.server.global.common.BaseEntity;
 
 @Getter
 @Entity
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "contents")
-public class Contents {
+public class Contents extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
