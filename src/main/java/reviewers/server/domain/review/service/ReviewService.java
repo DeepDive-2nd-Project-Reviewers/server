@@ -15,9 +15,12 @@ import reviewers.server.domain.review.dto.ReviewRequestDto;
 import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewRepository;
+import reviewers.server.domain.user.entity.User;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
+import reviewers.server.global.util.SecurityUtil;
 
+import java.security.Security;
 import java.util.List;
 
 @Slf4j
@@ -28,10 +31,15 @@ public class ReviewService {
     private final ContentsRepository contentsRepository;
     private final ReviewRepository reviewRepository;
 
+    public User getCurrentUser(){
+        return SecurityUtil.currentMember();
+    }
+
     public void create(Long contentsId, ReviewRequestDto requestDto) {
-        checkIfContentsExists(contentsId);
-        Long count = Long.valueOf(requestDto.getStarCount());
-        Review result = new Review(requestDto, count);
+        User user = getCurrentUser();
+        Contents contents = checkIfContentsExists(contentsId);
+        Long count = Long.valueOf(requestDto.getHeartCount());
+        Review result = new Review(requestDto, count, user, contents);
         reviewRepository.save(result);
     }
 
@@ -58,7 +66,7 @@ public class ReviewService {
     public void updateReview(Long contentsId, Long reviewId, ReviewRequestDto requestDto) {
         checkIfContentsExists(contentsId);
         Review review = checkIfReviewExist(reviewId);
-        Long count = Long.valueOf(requestDto.getStarCount());
+        Long count = Long.valueOf(requestDto.getHeartCount());
 
         review.updateReview(requestDto, count);
     }

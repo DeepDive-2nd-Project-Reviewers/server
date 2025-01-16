@@ -18,19 +18,21 @@ public enum ErrorType {
 
     /* ------------------------------- User -------------------------------------*/
     // 400 BAD_REQUEST
-    _DUPLICATED_EMAIL(BAD_REQUEST, "C4002","이미 가입된 이메일 입니다."),
-    _EMAIL_SEND_FAILED(BAD_REQUEST, "C4003", "이메일 전송이 실패 하였습니다."),
-    _EXPIRED_CERTIFICATION_CODE(BAD_REQUEST, "C4004", "만료된 인증 코드입니다."),
-    _DUPLICATED_NICKNAME(BAD_REQUEST, "C4005", "이미 사용중인 닉네임 입니다."),
-    _NOT_FOUND_USER(BAD_REQUEST, "C4006", "email 해당하는 User를 찾을 수 없습니다."),
-    _EXPIRED_TOKEN(BAD_REQUEST, "C4007", "만료된 토큰 입니다."),
-    _NOT_FOUND_TOKEN(BAD_REQUEST, "C4008", "만료되거나 삭제된 토큰 입니다."),
-    _DUPLICATED_TOKEN(BAD_REQUEST, "C4009", "이미 등록 된 토큰 입니다."),
+    _DUPLICATED_EMAIL(BAD_REQUEST, "U4002","이미 가입된 이메일 입니다."),
+    _EMAIL_SEND_FAILED(BAD_REQUEST, "U4003", "이메일 전송이 실패 하였습니다."),
+    _EXPIRED_CERTIFICATION_CODE(BAD_REQUEST, "U4004", "만료된 인증 코드입니다."),
+    _DUPLICATED_NICKNAME(BAD_REQUEST, "U4005", "이미 사용중인 닉네임 입니다."),
+    _NOT_FOUND_USER(BAD_REQUEST, "U4006", "email 해당하는 User를 찾을 수 없습니다."),
+    _EXPIRED_TOKEN(BAD_REQUEST, "U4007", "만료된 토큰 입니다."),
+    _NOT_FOUND_TOKEN(BAD_REQUEST, "U4008", "만료되거나 삭제된 토큰 입니다."),
+    _DUPLICATED_TOKEN(BAD_REQUEST, "U4009", "이미 등록 된 토큰 입니다."),
 
     // 401 UNAUTHORIZED
-    _INVALID_CERTIFICATION_CODE(UNAUTHORIZED, "C4011", "유효하지 않은 인증 코드입니다."),
-    _INVALID_PASSWORD(UNAUTHORIZED,"C4012","비밀번호가 일치하지 않습니다."),
-    _INVALID_TOKEN(UNAUTHORIZED,"C4013","잘못된 토큰 입니다."),
+    _INVALID_CERTIFICATION_CODE(UNAUTHORIZED, "U4011", "유효하지 않은 인증 코드입니다."),
+    _INVALID_PASSWORD(UNAUTHORIZED,"U4012","비밀번호가 일치하지 않습니다."),
+    _INVALID_TOKEN(UNAUTHORIZED,"U4013","잘못된 토큰 입니다."),
+
+    _INVALID_AUTHENTICATION(UNAUTHORIZED, "U4031", "인증 방식이 유효하지 않습니다."),
 
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),

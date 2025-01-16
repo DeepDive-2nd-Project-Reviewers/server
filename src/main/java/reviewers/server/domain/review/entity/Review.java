@@ -24,6 +24,7 @@ public class Review extends BaseEntity {
     private Long heartCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,9 +32,11 @@ public class Review extends BaseEntity {
     private Contents contents;
 
     @Builder
-    public Review(ReviewRequestDto reviewRequestDto, Long count) {
+    public Review(ReviewRequestDto reviewRequestDto, Long count, User user, Contents contents) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
+        this.user = user;
+        this.contents = contents;
         this.heartCount = count;
     }
 
