@@ -53,7 +53,7 @@ public class RedisService {
         redisTemplate.delete(userId);
     }
 
-    public void blackListAccesToken(String accessToken){
+    public void blackListAccessToken(String accessToken){
         // 이미 블랙리스트에 존재하는지 확인
         if (Boolean.TRUE.equals(redisTemplate.hasKey(accessToken))) {
             throw new BaseErrorException(ErrorType._DUPLICATED_TOKEN);
