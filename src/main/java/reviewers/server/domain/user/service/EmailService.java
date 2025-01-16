@@ -12,7 +12,7 @@ import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 
 import javax.naming.AuthenticationException;
-import java.util.Random;
+import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class EmailService {
 
 
     public static String generateCertificationNumber() {
-        return String.valueOf(new Random().nextInt(900000) + 100000);
+        return String.valueOf(new SecureRandom().nextInt(900000) + 100000);
     }
 
     public void sendCertificationEmail(EmailCertificationRequestDto requestDto) {
