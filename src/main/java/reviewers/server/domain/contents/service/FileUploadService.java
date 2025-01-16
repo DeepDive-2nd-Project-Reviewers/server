@@ -1,6 +1,5 @@
 package reviewers.server.domain.contents.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 
@@ -85,7 +85,7 @@ public class FileUploadService {
         return UUID.randomUUID().toString().substring(0, 10) + "_" + originalFilename;
     }
 
-    public void deleteImage(String imageUrl) {
+    public void deleteImageByUrl(String imageUrl) {
         String key = extractKeyFromImageUrl(imageUrl);
         try {
             amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, key));

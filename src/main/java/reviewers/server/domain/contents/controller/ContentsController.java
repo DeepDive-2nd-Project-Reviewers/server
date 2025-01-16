@@ -40,8 +40,9 @@ public class ContentsController {
     }
 
     @PutMapping("/{contentId}")
-    public SuccessResponse<ContentsResponseDto> update(@PathVariable Long contentId, @RequestBody ContentsRequestDto dto){
-        ContentsResponseDto response = contentsService.update(contentId, dto);
+    public SuccessResponse<ContentsResponseDto> update(@PathVariable Long contentId, @RequestPart ContentsRequestDto dto,
+                                                       @RequestPart(value = "image", required = false) MultipartFile image){
+        ContentsResponseDto response = contentsService.update(contentId, dto, image);
         return new SuccessResponse<>(response);
     }
 

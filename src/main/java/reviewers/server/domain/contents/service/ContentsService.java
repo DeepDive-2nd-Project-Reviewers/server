@@ -47,11 +47,13 @@ public class ContentsService {
         return toDto(content);
     }
 
-    public ContentsResponseDto update(Long id, ContentsRequestDto request) {
+    public ContentsResponseDto update(Long id, ContentsRequestDto request, MultipartFile image) {
         Contents content = findById(id);
 
         actorAppearancesService.deleteByContents(content);
-        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary());
+        fileUploadService.deleteImageByUrl(content.getImage());
+        String url = fileUploadService.upload(image);
+        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), url);
         actorService.create(request.getActor(), content);
         return toDto(contentsRepository.save(content));
     }
