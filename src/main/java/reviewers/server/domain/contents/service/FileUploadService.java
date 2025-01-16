@@ -90,7 +90,7 @@ public class FileUploadService {
         try {
             amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, key));
         } catch (Exception e) {
-            throw new BaseErrorException(ErrorType._IO_EXCEPTION_ON_UPLOAD);
+            throw new BaseErrorException(ErrorType._FAIL_DELETE_IMAGE);
         }
     }
 
