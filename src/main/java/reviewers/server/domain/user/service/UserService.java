@@ -105,7 +105,7 @@ public class UserService {
 
     public LogoutResponseDto logout(LogoutRequestDto requestDto) {
 
-        redisService.blackListAccesToken(requestDto.getAccessToken());
+        redisService.blackListAccessToken(requestDto.getAccessToken());
 
         Long userId = jwtProvider.getUserIdFromRefreshToken(requestDto.getRefreshToken());
         redisService.deleteRefreshToken(String.valueOf(userId));
