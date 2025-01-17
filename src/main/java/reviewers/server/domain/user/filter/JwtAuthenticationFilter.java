@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +18,7 @@ import reviewers.server.global.exception.ErrorType;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -26,10 +28,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
+        log.info("requestURI: {}", requestURI);
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (isPublicUrl(request)) {
+        if (isPublicUrl(requestURI)) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -69,18 +72,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private static boolean isPublicUrl(HttpServletRequest request) {
-        String contextPath = request.getContextPath();  // 배포 환경의 컨텍스트 경로
-        String requestURI = request.getRequestURI();
-        String fullPath = contextPath + requestURI;
+    private static boolean isPublicUrl(final String requestURI) {
 
-        return fullPath.startsWith(contextPath + "/swagger-ui/**") ||
-                fullPath.startsWith(contextPath + "/v3/api-docs") ||
-                fullPath.startsWith(contextPath + "/favicon.ico") ||
-                fullPath.startsWith(contextPath + "/api/health") ||
-                fullPath.startsWith(contextPath + "/error") ||
-                fullPath.startsWith(contextPath + "/api/v1/user/") ||
-                fullPath.startsWith(contextPath + "/login");
+        return requestURI.startsWith("/swagger-ui") ||
+                requestURI.startsWith("/v3/api-docs") ||
+                requestURI.startsWith("/favicon.ico") ||
+                requestURI.startsWith("/api/health") ||
+                requestURI.startsWith("/error") ||
+                requestURI.startsWith("/api/v1/user/**");
     }
 
 }
