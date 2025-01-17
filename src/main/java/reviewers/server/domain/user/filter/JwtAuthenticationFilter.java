@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static boolean isPublicUrl(final String requestURI) {
 
-        return requestURI.startsWith("/swagger-ui") ||
+        return requestURI.startsWith("/swagger-ui/") ||
                 requestURI.startsWith("/v3/api-docs") ||
                 requestURI.startsWith("/favicon.ico") ||
                 requestURI.startsWith("/api/health") ||
