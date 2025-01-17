@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (isPublicUrl(request)) {
+        if (isPublicUrl(requestURI)) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -69,19 +69,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private static boolean isPublicUrl(HttpServletRequest request) {
-        String contextPath = request.getContextPath();  // 배포 환경의 컨텍스트 경로
-        String requestURI = request.getRequestURI();
-        String fullPath = contextPath + requestURI;
-
-        return fullPath.startsWith(contextPath + "/swagger-ui") ||
-                fullPath.startsWith(contextPath + "/v3/api-docs") ||
-                fullPath.startsWith(contextPath + "/favicon.ico") ||
-                fullPath.startsWith(contextPath + "/api/health") ||
-                fullPath.startsWith(contextPath + "/error") ||
-                fullPath.startsWith(contextPath + "/api/v1/user/") ||
-                fullPath.startsWith(contextPath + "/login");
+    private static boolean isPublicUrl(String requestURI) {
+        return
+                requestURI.contains("/swagger-ui") ||  // Swagger 경로 (하위 경로 모두 포함)
+                        requestURI.contains("/v3/api-docs") || // OpenAPI 스펙 경로
+                        requestURI.contains("/favicon.ico") ||
+                        requestURI.contains("/api/health") ||
+                        requestURI.contains("/error") ||
+                        requestURI.contains("/api/v1/user/") ||
+                        requestURI.contains("/login");
     }
-
 }
 
