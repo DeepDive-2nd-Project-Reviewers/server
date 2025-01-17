@@ -61,14 +61,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationFromJwt(String token) {
-        String email = jwtProvider.getEmailFromToken(token);
-        String role = jwtProvider.getRoleFromToken(token);
+        try {
+            String email = jwtProvider.getEmailFromToken(token);
+            String role = jwtProvider.getRoleFromToken(token);
+            Long userId = jwtProvider.getUserIdFromToken(token);
 
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(email, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e) {
+            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
+        }
     }
 
     private void setAuthenticationFromGoogleToken(String token) {
@@ -77,12 +82,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             GoogleTokenVerifier.GoogleUserInfo userInfo = googleTokenVerifier.verify(token);
 
             String email = userInfo.getEmail();
-            String name = userInfo.getName();
+            String userId = userInfo.getProviderId();
 
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, name, authorities);
+                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) {
             throw new BaseErrorException(ErrorType._INVALID_TOKEN);
