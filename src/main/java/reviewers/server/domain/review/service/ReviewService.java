@@ -1,11 +1,14 @@
 package reviewers.server.domain.review.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.entity.Contents;
@@ -16,6 +19,8 @@ import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
+import reviewers.server.domain.user.provider.JwtProvider;
+import reviewers.server.domain.user.repository.UserRepository;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 import reviewers.server.global.util.SecurityUtil;
@@ -30,11 +35,19 @@ public class ReviewService {
 
     private final ContentsRepository contentsRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
 
     public void create(Long contentsId, ReviewRequestDto requestDto) {
+
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
+
         Contents contents = checkIfContentsExists(contentsId);
         Long count = Long.valueOf(requestDto.getStarCount());
-        Review result = new Review(requestDto, count, contents);
+
+        Review result = new Review(requestDto, count, contents, user);
         reviewRepository.save(result);
     }
 
