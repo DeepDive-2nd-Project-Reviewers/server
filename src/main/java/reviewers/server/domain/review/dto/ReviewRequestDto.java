@@ -11,6 +11,6 @@ public class ReviewRequestDto {
 
     @NotNull
     private String content;
-    private String heartCount;
+    private String starCount;
 
 }

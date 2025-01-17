@@ -38,7 +38,7 @@ public class ReviewService {
     public void create(Long contentsId, ReviewRequestDto requestDto) {
         User user = getCurrentUser();
         Contents contents = checkIfContentsExists(contentsId);
-        Long count = Long.valueOf(requestDto.getHeartCount());
+        Long count = Long.valueOf(requestDto.getStarCount());
         Review result = new Review(requestDto, count, user, contents);
         reviewRepository.save(result);
     }
@@ -66,7 +66,7 @@ public class ReviewService {
     public void updateReview(Long contentsId, Long reviewId, ReviewRequestDto requestDto) {
         checkIfContentsExists(contentsId);
         Review review = checkIfReviewExist(reviewId);
-        Long count = Long.valueOf(requestDto.getHeartCount());
+        Long count = Long.valueOf(requestDto.getStarCount());
 
         review.updateReview(requestDto, count);
     }
@@ -77,7 +77,7 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    public Contents checkIfContentsExists(Long contentsId) {
+    private Contents checkIfContentsExists(Long contentsId) {
         return contentsRepository.findById(contentsId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }

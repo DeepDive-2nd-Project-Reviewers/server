@@ -21,6 +21,7 @@ public class Review extends BaseEntity {
 
     private String title;
     private String content;
+    private Long starCount;
     private long heartCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,13 +38,13 @@ public class Review extends BaseEntity {
         this.content = reviewRequestDto.getContent();
         this.user = user;
         this.contents = contents;
-        this.heartCount = count;
+        this.starCount = count;
     }
 
     public void updateReview(ReviewRequestDto reviewRequestDto, Long count) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
-        this.heartCount = count;
+        this.starCount = count;
     }
 
     public void addHeartCount() {
