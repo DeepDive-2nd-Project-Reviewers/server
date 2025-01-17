@@ -25,9 +25,10 @@ public class JwtProvider {
     }
 
     // Access Token 생성
-    public String createAccessToken(String email, String role) {
+    public String createAccessToken(Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
@@ -61,14 +62,22 @@ public class JwtProvider {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    // access 토큰에서 권한 추출
-    public String getRoleFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
+    private Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("role", String.class);
+    }
+
+    // access 토큰에서 권한 추출
+    public String getRoleFromToken(String token) {
+        return getClaimsFromToken(token).get("role", String.class);
+    }
+
+    // access 토큰에서 userId 추출
+    public Long getUserIdFromToken(String token) {
+        return getClaimsFromToken(token).get("userId", Long.class);
     }
 
     // refreshToken 토큰에서 userId 추출
