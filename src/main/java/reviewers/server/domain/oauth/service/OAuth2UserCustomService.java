@@ -2,6 +2,7 @@ package reviewers.server.domain.oauth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -20,11 +21,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2UserCustomService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("OAuth2User attributes: " + oAuth2User.getAttributes());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response;
@@ -40,6 +41,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         String email = oAuth2Response.getEmail();
         String role = "USER";
 
+        String accessToken = userRequest.getAccessToken().getTokenValue();
+
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {  // 처음 로그인하는 경우 (새 회원)
@@ -54,7 +57,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
             userRepository.save(existData);
         }
 
-        return new CustomOAuth2User(oAuth2Response, role);
+        return new CustomOAuth2User(oAuth2Response, role, accessToken);
     }
 }
 
