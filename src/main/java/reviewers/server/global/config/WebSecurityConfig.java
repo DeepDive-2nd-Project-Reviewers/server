@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/api/v1/user/**"
                                 ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
+                                ,"/favicon.ico"
                                 ,"/error").permitAll()
                         .requestMatchers("/api/v1/comments/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET,"/api/v1/contents/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
