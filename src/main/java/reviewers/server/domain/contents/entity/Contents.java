@@ -23,7 +23,7 @@ public class Contents extends BaseEntity {
 
     private String image;
 
-    private Long heartCount;
+    private long heartCount;
 
     @Builder
     public Contents(String category, String title, String writer, String summary, String image) {
