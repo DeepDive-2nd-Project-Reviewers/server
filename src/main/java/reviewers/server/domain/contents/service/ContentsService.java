@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
 import reviewers.server.domain.contents.dto.ContentsResponseDto;
+import reviewers.server.domain.contents.entity.Category;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.mapper.ContentsMapper;
 import reviewers.server.domain.contents.repository.ContentsRepository;
@@ -33,8 +34,8 @@ public class ContentsService {
         return toDto(saved);
     }
 
-    public Slice<ContentsResponseDto> readAllByCategory(String category, Pageable pageable) {
-        if(category != null && !category.equals("book") && !category.equals("movie")) {
+    public Slice<ContentsResponseDto> readAllByCategory(Category category, Pageable pageable) {
+        if (category != null && category != Category.BOOK && category != Category.MOVIE) {
             throw new BaseErrorException(ErrorType._NOT_FOUND_CATEGORY);
         }
 
@@ -52,7 +53,8 @@ public class ContentsService {
 
         actorAppearancesService.deleteByContents(content);
         String url = processImage(content.getImage(), image);
-        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(), url);
+        content.updateContents(request.getCategory(), request.getTitle(), request.getWriter(), request.getSummary(),
+                url);
         actorService.create(request.getActor(), content);
         return toDto(contentsRepository.save(content));
     }
@@ -74,14 +76,14 @@ public class ContentsService {
     }
 
     private String processImage(MultipartFile image) {
-        if(image != null) {
+        if (image != null) {
             return fileUploadService.upload(image);
         }
         return null;
     }
 
     private String processImage(String url, MultipartFile image) {
-        if(url != null && !url.isEmpty()) {
+        if (url != null && !url.isEmpty()) {
             fileUploadService.deleteImageByUrl(url);
         }
         return processImage(image);

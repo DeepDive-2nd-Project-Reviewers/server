@@ -1,7 +1,6 @@
 package reviewers.server.domain.review.controller;
 
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,45 +14,45 @@ import reviewers.server.global.success.SuccessResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/review")
+@RequestMapping("/api/v1")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/{contentsId}")
-    public SuccessResponse createReview(@PathVariable Long contentsId,
+    @PostMapping("/contents/{contentId}/reviews")
+    public SuccessResponse createReview(@PathVariable Long contentId,
                                         @Valid @RequestBody ReviewRequestDto dto){
-        reviewService.create(contentsId, dto);
+        reviewService.create(contentId, dto);
         return new SuccessResponse("Review created");
     }
 
-    @GetMapping("/{contentsId}")
-    public SuccessResponse<Page<ReviewResponseDto>> getAllReviews(@PathVariable Long contentsId,
+    @GetMapping("/contents/{contentId}/reviews")
+    public SuccessResponse<Page<ReviewResponseDto>> getAllReviews(@PathVariable Long contentId,
                                                                   @PageableDefault(sort = "id", size = 8) Pageable pageable){
 
-        return new SuccessResponse<>(reviewService.getAllReview(contentsId, pageable));
+        return new SuccessResponse<>(reviewService.getAllReview(contentId, pageable));
     }
 
-    @GetMapping("/{contentsId}/{reviewId}")
-    public SuccessResponse<ReviewDetailResponseDto> getReview(@PathVariable Long contentsId,
+    @GetMapping("/contents/{contentId}/reviews/{reviewId}")
+    public SuccessResponse<ReviewDetailResponseDto> getReview(@PathVariable Long contentId,
                                                               @PathVariable Long reviewId){
 
-        return new SuccessResponse<>(reviewService.getReview(contentsId, reviewId));
+        return new SuccessResponse<>(reviewService.getReview(contentId, reviewId));
     }
 
-    @PutMapping("/{contentsId}/{reviewId}")
-    public SuccessResponse updateReview(@PathVariable Long contentsId,
+    @PutMapping("/contents/{contentId}/reviews/{reviewId}")
+    public SuccessResponse updateReview(@PathVariable Long contentId,
                                         @PathVariable Long reviewId,
                                         @Valid @RequestBody ReviewRequestDto dto){
 
-        reviewService.updateReview(contentsId, reviewId, dto);
+        reviewService.updateReview(contentId, reviewId, dto);
         return new SuccessResponse("Review updated");
     }
 
-    @DeleteMapping("/{contentsId}/{reviewId}")
-    public SuccessResponse deleteReview(@PathVariable Long contentsId,
+    @DeleteMapping("/contents/{contentId}/reviews/{reviewId}")
+    public SuccessResponse deleteReview(@PathVariable Long contentId,
                                         @PathVariable Long reviewId){
-        reviewService.deleteReview(contentsId, reviewId);
+        reviewService.deleteReview(contentId, reviewId);
 
         return new SuccessResponse("Review deleted");
     }
