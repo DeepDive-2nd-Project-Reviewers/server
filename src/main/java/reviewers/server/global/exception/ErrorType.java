@@ -3,7 +3,6 @@ package reviewers.server.global.exception;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -42,7 +41,14 @@ public enum ErrorType {
 
     /* ------------------------------- Heart -------------------------------------*/
     _ALREADY_LIKE(BAD_REQUEST, "H4001", "이미 좋아요를 했습니다."),
-    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않아 취소할 좋아요가 없습니다.");
+    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않아 취소할 좋아요가 없습니다."),
+
+    /* ------------------------------- IMAGE -------------------------------------*/
+    _NULL_IMAGE(BAD_REQUEST, "I4001", "이미지가 존재하지 않습니다."),
+    _NO_EXTENSION(BAD_REQUEST, "I4002", "확장자가 누락되었습니다."),
+    _INVALID_FILE_EXTENSION(BAD_REQUEST, "I4003", "지원하지 않는 확장자 입니다."),
+    _IO_EXCEPTION_ON_UPLOAD(BAD_REQUEST, "I4004", "파일을 가져오는데 실패하였습니다."),
+    _FAIL_DELETE_IMAGE(BAD_REQUEST, "I4005", "파일을 삭제하는 데 실패하였습니다.");
 
     private HttpStatus status;
     private String code;
