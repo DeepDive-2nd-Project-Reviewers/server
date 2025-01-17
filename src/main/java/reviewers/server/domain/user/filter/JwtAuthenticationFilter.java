@@ -51,13 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰에서 사용자 정보 추출
         String email = jwtProvider.getEmailFromToken(token);
-        String role = jwtProvider.getRoleFromToken(token);  // `role` 추출
+        String role = jwtProvider.getRoleFromToken(token);
+        Long userId = jwtProvider.getUserIdFromToken(token);
+        // `role` 추출
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
         try {
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, authorities);
+                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (Exception e) {

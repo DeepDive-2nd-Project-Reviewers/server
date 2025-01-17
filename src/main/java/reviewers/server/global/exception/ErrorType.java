@@ -30,12 +30,8 @@ public enum ErrorType {
     _INVALID_CERTIFICATION_CODE(UNAUTHORIZED, "U4011", "유효하지 않은 인증 코드입니다."),
     _INVALID_PASSWORD(UNAUTHORIZED,"U4012","비밀번호가 일치하지 않습니다."),
     _INVALID_TOKEN(UNAUTHORIZED,"U4013","잘못된 토큰 입니다."),
-
     _INVALID_AUTHENTICATION(UNAUTHORIZED, "U4014", "인증 방식이 유효하지 않습니다."),
-    _INVALID_CERTIFICATION_CODE(UNAUTHORIZED, "C4015", "유효하지 않은 인증 코드입니다."),
-    _INVALID_PASSWORD(UNAUTHORIZED,"C4016","비밀번호가 일치하지 않습니다."),
-    _INVALID_TOKEN(UNAUTHORIZED,"C4017","잘못된 토큰 입니다."),
-    _TOKEN_MISSING(UNAUTHORIZED,"C4018", "토큰 값이 다르거나, 입력되지 않았습니다."),
+    _TOKEN_MISSING(UNAUTHORIZED,"U4015", "토큰 값이 다르거나, 입력되지 않았습니다."),
 
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),

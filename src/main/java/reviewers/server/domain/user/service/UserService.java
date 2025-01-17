@@ -74,7 +74,7 @@ public class UserService {
 
         // JWT 토큰 생성
         log.info("role: {}", user.getRole());
-        String accessToken = jwtProvider.createAccessToken(user.getEmail(), user.getRole().name());
+        String accessToken = jwtProvider.createAccessToken(user.getUserId(), user.getEmail(), user.getRole().name());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
         int expiredTime = 3600; // 1시간
 
@@ -96,7 +96,7 @@ public class UserService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
 
-        String accessToken = jwtProvider.createAccessToken(user.getEmail(), String.valueOf(user.getRole()));
+        String accessToken = jwtProvider.createAccessToken(user.getUserId(), user.getEmail(), String.valueOf(user.getRole()));
         int expiredTime = 3600;
 
         return new RefreshAccessTokenResponseDto(accessToken, expiredTime);
