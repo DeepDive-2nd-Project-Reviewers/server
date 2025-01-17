@@ -31,15 +31,10 @@ public class ReviewService {
     private final ContentsRepository contentsRepository;
     private final ReviewRepository reviewRepository;
 
-    public User getCurrentUser(){
-        return SecurityUtil.currentMember();
-    }
-
     public void create(Long contentsId, ReviewRequestDto requestDto) {
-        User user = getCurrentUser();
         Contents contents = checkIfContentsExists(contentsId);
         Long count = Long.valueOf(requestDto.getStarCount());
-        Review result = new Review(requestDto, count, user, contents);
+        Review result = new Review(requestDto, count, contents);
         reviewRepository.save(result);
     }
 

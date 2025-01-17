@@ -33,10 +33,9 @@ public class Review extends BaseEntity {
     private Contents contents;
 
     @Builder
-    public Review(ReviewRequestDto reviewRequestDto, Long count, User user, Contents contents) {
+    public Review(ReviewRequestDto reviewRequestDto, Long count, Contents contents) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
-        this.user = user;
         this.contents = contents;
         this.starCount = count;
     }
