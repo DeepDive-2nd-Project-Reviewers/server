@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.user.provider.JwtProvider;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
@@ -20,16 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;  // JWT 검증
+    private final GoogleTokenVerifier googleTokenVerifier;  // Google 액세스 토큰 검증 로직
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
 
         // 토큰 검사 제외 경로
-        // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (requestURI.startsWith("/api/v1/user/") || requestURI.startsWith("/login")) {
+        if (requestURI.startsWith("/api/v1/user/") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/loginSuccess")) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -41,31 +43,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new BaseErrorException(ErrorType._TOKEN_MISSING);
         }
 
-        token = token.substring(7);
-
-
-        if (!jwtProvider.validateToken(token)) {
-            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
-        }
-
-
-        // 토큰에서 사용자 정보 추출
-        String email = jwtProvider.getEmailFromToken(token);
-        String role = jwtProvider.getRoleFromToken(token);
-        Long userId = jwtProvider.getUserIdFromToken(token);
-        // `role` 추출
-
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        token = token.substring(7); // "Bearer " 제거
 
         try {
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (jwtProvider.validateToken(token)) {
+                setAuthenticationFromJwt(token);
+            } else {
+                setAuthenticationFromGoogleToken(token);
+            }
+
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             SecurityContextHolder.clearContext();  // 예외 발생 시 SecurityContext 제거
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write(e.getMessage());
+            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+    private void setAuthenticationFromJwt(String token) {
+        String email = jwtProvider.getEmailFromToken(token);
+        String role = jwtProvider.getRoleFromToken(token);
+
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(email, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void setAuthenticationFromGoogleToken(String token) {
+        // Google 액세스 토큰 검증
+        try {
+            GoogleTokenVerifier.GoogleUserInfo userInfo = googleTokenVerifier.verify(token);
+
+            String email = userInfo.getEmail();
+            String name = userInfo.getName();
+
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(email, name, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e) {
+            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
         }
     }
 }
