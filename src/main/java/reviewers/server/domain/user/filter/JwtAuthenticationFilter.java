@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (requestURI.startsWith("/api/v1/user/") || requestURI.startsWith("/login")) {
+        if (isPublicUrl(requestURI)) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -65,6 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(e.getMessage());
         }
+    }
+
+    private static boolean isPublicUrl(String requestURI) {
+        return
+                requestURI.startsWith("/swagger-ui") ||  // Swagger 경로 (하위 경로 모두 포함)
+                        requestURI.startsWith("/v3/api-docs") || // OpenAPI 스펙 경로
+                        requestURI.startsWith("/favicon.ico") ||
+                        requestURI.startsWith("/api/health") ||
+                        requestURI.startsWith("/error") ||
+                        requestURI.startsWith("/api/v1/user/") ||
+                        requestURI.startsWith("/login");
     }
 }
 
