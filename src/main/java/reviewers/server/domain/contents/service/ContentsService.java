@@ -35,7 +35,7 @@ public class ContentsService {
     }
 
     public Slice<ContentsResponseDto> readAllByCategory(Category category, Pageable pageable) {
-        if (category != Category.BOOK && category != Category.MOVIE) {
+        if (category != null && category != Category.BOOK && category != Category.MOVIE) {
             throw new BaseErrorException(ErrorType._NOT_FOUND_CATEGORY);
         }
 
