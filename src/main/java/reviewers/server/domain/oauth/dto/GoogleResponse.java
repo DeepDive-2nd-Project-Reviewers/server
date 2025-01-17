@@ -4,10 +4,10 @@ import java.util.Map;
 
 public class GoogleResponse implements OAuth2Response {
 
-    private final Map<String, Object> attribute;
+    private final Map<String, Object> attributes; // Google 사용자 정보 속성
 
-    public GoogleResponse(Map<String, Object> attribute) {
-        this.attribute = attribute;
+    public GoogleResponse(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 
     @Override
@@ -17,16 +17,22 @@ public class GoogleResponse implements OAuth2Response {
 
     @Override
     public String getProviderId() {
-        return attribute.get("sub").toString();
+        return attributes.get("sub").toString();
     }
 
     @Override
     public String getEmail() {
-        return attribute.get("email").toString();
+        return attributes.get("email").toString();
     }
 
     @Override
     public String getName() {
-        return attribute.get("name").toString();
+        return attributes.get("name").toString();
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 }
+
