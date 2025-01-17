@@ -3,7 +3,6 @@ package reviewers.server.global.exception;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -32,7 +31,11 @@ public enum ErrorType {
     _INVALID_PASSWORD(UNAUTHORIZED,"U4012","비밀번호가 일치하지 않습니다."),
     _INVALID_TOKEN(UNAUTHORIZED,"U4013","잘못된 토큰 입니다."),
 
-    _INVALID_AUTHENTICATION(UNAUTHORIZED, "U4031", "인증 방식이 유효하지 않습니다."),
+    _INVALID_AUTHENTICATION(UNAUTHORIZED, "U4014", "인증 방식이 유효하지 않습니다."),
+    _INVALID_CERTIFICATION_CODE(UNAUTHORIZED, "C4015", "유효하지 않은 인증 코드입니다."),
+    _INVALID_PASSWORD(UNAUTHORIZED,"C4016","비밀번호가 일치하지 않습니다."),
+    _INVALID_TOKEN(UNAUTHORIZED,"C4017","잘못된 토큰 입니다."),
+    _TOKEN_MISSING(UNAUTHORIZED,"C4018", "토큰 값이 다르거나, 입력되지 않았습니다."),
 
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),
@@ -43,7 +46,14 @@ public enum ErrorType {
 
     /* ------------------------------- Heart -------------------------------------*/
     _ALREADY_LIKE(BAD_REQUEST, "H4001", "이미 좋아요를 했습니다."),
-    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않아 취소할 좋아요가 없습니다.");
+    _NOT_LIKE(BAD_REQUEST, "H4002", "좋아요를 누르지 않아 취소할 좋아요가 없습니다."),
+
+    /* ------------------------------- IMAGE -------------------------------------*/
+    _NULL_IMAGE(BAD_REQUEST, "I4001", "이미지가 존재하지 않습니다."),
+    _NO_EXTENSION(BAD_REQUEST, "I4002", "확장자가 누락되었습니다."),
+    _INVALID_FILE_EXTENSION(BAD_REQUEST, "I4003", "지원하지 않는 확장자 입니다."),
+    _IO_EXCEPTION_ON_UPLOAD(BAD_REQUEST, "I4004", "파일을 가져오는데 실패하였습니다."),
+    _FAIL_DELETE_IMAGE(BAD_REQUEST, "I4005", "파일을 삭제하는 데 실패하였습니다.");
 
     private HttpStatus status;
     private String code;

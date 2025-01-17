@@ -3,6 +3,8 @@ package reviewers.server.domain.contents.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class ContentsResponseDto {
@@ -21,4 +23,8 @@ public class ContentsResponseDto {
     private String actor;
 
     private long heartCount;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import reviewers.server.domain.user.provider.JwtProvider;
+import reviewers.server.global.exception.BaseErrorException;
+import reviewers.server.global.exception.ErrorType;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,22 +38,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
 
         if (token == null || token.isBlank() || !token.startsWith("Bearer ")) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("Token is missing or malformed");
-            return;
+            throw new BaseErrorException(ErrorType._TOKEN_MISSING);
         }
 
         token = token.substring(7);
 
-        try {
-            if (!jwtProvider.validateToken(token)) {
-                throw new RuntimeException("Invalid Token");
-            }
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write(e.getMessage());
-            return;
+
+        if (!jwtProvider.validateToken(token)) {
+            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
         }
+
 
         // 토큰에서 사용자 정보 추출
         String email = jwtProvider.getEmailFromToken(token);
