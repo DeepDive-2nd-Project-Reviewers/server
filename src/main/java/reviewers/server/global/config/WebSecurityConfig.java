@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.entity.Role;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
@@ -22,6 +23,7 @@ public class WebSecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final OAuth2UserCustomService userDetailsService;
+    private final GoogleTokenVerifier googleTokenVerifier;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +33,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/api/v1/user/**"
                                 ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
-                                ,"/error").permitAll()
+                                ,"/error"
+                        ).permitAll()
                         .requestMatchers("/api/v1/comments/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET,"/api/v1/contents/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/api/v1/contents/**").hasRole(Role.ADMIN.name())
@@ -47,7 +50,7 @@ public class WebSecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler())
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, googleTokenVerifier), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     private AccessDeniedHandler customAccessDeniedHandler() {
