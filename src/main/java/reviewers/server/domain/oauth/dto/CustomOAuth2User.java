@@ -11,28 +11,24 @@ public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
     private final String role;
+    private final String accessToken; // 액세스 토큰 추가
 
-    public CustomOAuth2User(OAuth2Response oAuth2Response, String role) {
+    public CustomOAuth2User(OAuth2Response oAuth2Response, String role, String accessToken) {
         this.oAuth2Response = oAuth2Response;
         this.role = role;
+        this.accessToken = accessToken;
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of();
+        return oAuth2Response.getAttributes(); // 기존 oAuth2Response의 속성을 반환
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                 return role;
-            }
-        });
-
-        return collection;
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(() -> role); // 람다를 사용해 GrantedAuthority 구현
+        return authorities;
     }
 
     @Override
@@ -40,4 +36,8 @@ public class CustomOAuth2User implements OAuth2User {
         return oAuth2Response.getName();
     }
 
+    public String getAccessToken() {
+        return accessToken; // 액세스 토큰 반환
+    }
 }
+

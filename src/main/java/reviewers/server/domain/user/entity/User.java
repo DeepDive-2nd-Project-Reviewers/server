@@ -44,9 +44,9 @@ public class User {
         this.role = Role.USER;
     }
 
-    public User(String email, String encodedPassword){
+    public User(String email, String username){
         this.email = email;
-        this.password = encodedPassword;
+        this.username = username;
         this.role = Role.USER;
     }
 
