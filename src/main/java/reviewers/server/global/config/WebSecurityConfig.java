@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.entity.Role;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
@@ -27,7 +26,6 @@ public class WebSecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final OAuth2UserCustomService userDetailsService;
-    private final GoogleTokenVerifier googleTokenVerifier;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -62,7 +60,7 @@ public class WebSecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler())
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, googleTokenVerifier), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     private AccessDeniedHandler customAccessDeniedHandler() {
@@ -73,4 +71,17 @@ public class WebSecurityConfig {
                     accessDeniedException.getMessage() + "\", \"path\": \"" + request.getRequestURI() + "\"}");
         };
     }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
 }

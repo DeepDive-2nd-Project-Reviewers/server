@@ -5,12 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.user.provider.JwtProvider;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
@@ -18,21 +18,21 @@ import reviewers.server.global.exception.ErrorType;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;  // JWT 검증
-    private final GoogleTokenVerifier googleTokenVerifier;  // Google 액세스 토큰 검증 로직
+    private final JwtProvider jwtProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
+        log.info("requestURI: {}", requestURI);
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (isPublicUrl(request)) {
+        if (isPublicUrl(requestURI)) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -46,68 +46,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         token = token.substring(7);
 
-        try {
-            if (jwtProvider.validateToken(token)) {
-                setAuthenticationFromJwt(token);
-            } else {
-                setAuthenticationFromGoogleToken(token);
-            }
 
+        if (!jwtProvider.validateToken(token)) {
+            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
+        }
+
+
+        // 토큰에서 사용자 정보 추출
+        String email = jwtProvider.getEmailFromToken(token);
+        String role = jwtProvider.getRoleFromToken(token);
+        Long userId = jwtProvider.getUserIdFromToken(token);
+        // `role` 추출
+
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+        try {
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             SecurityContextHolder.clearContext();  // 예외 발생 시 SecurityContext 제거
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + e.getMessage() + "\"}");
+            response.getWriter().write(e.getMessage());
         }
     }
 
-    private void setAuthenticationFromJwt(String token) {
-        try {
-            String email = jwtProvider.getEmailFromToken(token);
-            String role = jwtProvider.getRoleFromToken(token);
-            Long userId = jwtProvider.getUserIdFromToken(token);
+    private static boolean isPublicUrl(final String requestURI) {
 
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
-            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
-        }
-    }
-
-    private void setAuthenticationFromGoogleToken(String token) {
-        // Google 액세스 토큰 검증
-        try {
-            GoogleTokenVerifier.GoogleUserInfo userInfo = googleTokenVerifier.verify(token);
-
-            String email = userInfo.getEmail();
-            String userId = userInfo.getProviderId();
-
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, email, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
-            throw new BaseErrorException(ErrorType._INVALID_TOKEN);
-        }
-    }
-
-    private static boolean isPublicUrl(HttpServletRequest request) {
-        String contextPath = request.getContextPath();  // 배포 환경의 컨텍스트 경로
-        String requestURI = request.getRequestURI();
-        String fullPath = contextPath + requestURI;
-
-        return fullPath.startsWith(contextPath + "/swagger-ui/**") ||
-                fullPath.startsWith(contextPath + "/v3/api-docs") ||
-                fullPath.startsWith(contextPath + "/favicon.ico") ||
-                fullPath.startsWith(contextPath + "/api/health") ||
-                fullPath.startsWith(contextPath + "/error") ||
-                fullPath.startsWith(contextPath + "/api/v1/user/") ||
-                fullPath.startsWith(contextPath + "/login") ||
-                fullPath.startsWith("/api/v1/loginSuccess");
+        return requestURI.startsWith("/swagger-ui") ||
+                requestURI.startsWith("/v3/api-docs") ||
+                requestURI.startsWith("/favicon.ico") ||
+                requestURI.startsWith("/api/health") ||
+                requestURI.startsWith("/error") ||
+                requestURI.startsWith("/api/v1/user/**");
     }
 
 }
