@@ -37,7 +37,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
         String username = oAuth2Response.getName(); // 구글 이름 (ex. 노현이)
         String email = oAuth2Response.getEmail();
-        String role = "ROLE_USER";
+        String role = "USER";
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
 

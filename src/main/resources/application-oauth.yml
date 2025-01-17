@@ -4,9 +4,9 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT}
+            client-id: ${CLIENT_ID}
             client-secret: ${GOOGLE_SECRET}
-            redirect-uri: http://localhost:8080/login/oauth2/code/goo
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
             scope:
               - email
               - profile
