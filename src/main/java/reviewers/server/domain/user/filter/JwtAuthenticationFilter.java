@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰 검사 제외 경로
         // 테스트를 위해 모두 제외, 추후에 수정 필요
-        if (requestURI.startsWith("/api/v1/") || requestURI.startsWith("/login")) {
+        if (requestURI.startsWith("/api/v1/user/") || requestURI.startsWith("/login")) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -53,9 +53,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = jwtProvider.getEmailFromToken(token);
         String role = jwtProvider.getRoleFromToken(token);  // `role` 추출
 
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
         try {
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, List.of(new SimpleGrantedAuthority(role)));
+                    new UsernamePasswordAuthenticationToken(email, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (Exception e) {

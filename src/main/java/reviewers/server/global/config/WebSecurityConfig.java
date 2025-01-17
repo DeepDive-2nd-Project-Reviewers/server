@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
+import reviewers.server.domain.user.entity.Role;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
 import reviewers.server.domain.user.provider.JwtProvider;
 
@@ -27,10 +28,14 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/v1/user/**").permitAll()
-                        .requestMatchers("/api/v1/comments/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/contents/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/v1/contents/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/api/v1/user/**"
+                                ,"/swagger-ui/**"
+                                ,"/v3/api-docs/**"
+                                ,"/error").permitAll()
+                        .requestMatchers("/api/v1/comments/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/contents/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                        .requestMatchers("/api/v1/contents/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/review/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                         .oauth2Login(oauth2 -> oauth2

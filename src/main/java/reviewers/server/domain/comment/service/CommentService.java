@@ -10,7 +10,7 @@ import reviewers.server.domain.comment.entity.Comment;
 import reviewers.server.domain.comment.dto.CommentRequestDto;
 import reviewers.server.domain.comment.repository.CommentRepository;
 import reviewers.server.domain.review.entity.Review;
-import reviewers.server.domain.review.repository.ReviewInterface;
+import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.repository.UserRepository;
 import reviewers.server.global.exception.BaseErrorException;
@@ -22,7 +22,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final ReviewInterface reviewRepository;
+    private final ReviewRepository reviewRepository;
     private final CommentConverter commentConverter;
 
     private User findUser(CommentRequestDto request) {

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Getter
 @NoArgsConstructor
 @Entity(name = "user")
@@ -24,7 +25,9 @@ public class User {
     private String password;
     private String username;
     private LocalDate birth;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
@@ -33,12 +36,18 @@ public class User {
     private List<ContentHeart> contentHearts = new ArrayList<>();
 
     @Builder
-    public User(String email, String encodedPassword, String username, LocalDate birth, String role) {
+    public User(String email, String encodedPassword, String username, LocalDate birth) {
         this.email = email;
         this.password = encodedPassword;
         this.username = username;
         this.birth = birth;
-        this.role = role;
+        this.role = Role.USER;
+    }
+
+    public User(String email, String encodedPassword){
+        this.email = email;
+        this.password = encodedPassword;
+        this.role = Role.USER;
     }
 
     public User update(String username) {

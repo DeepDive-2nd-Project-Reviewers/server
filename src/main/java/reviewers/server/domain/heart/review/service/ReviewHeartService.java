@@ -7,7 +7,7 @@ import reviewers.server.domain.heart.review.dto.ReviewHeartRequestDto;
 import reviewers.server.domain.heart.review.entity.ReviewHeart;
 import reviewers.server.domain.heart.review.repository.ReviewHeartRepository;
 import reviewers.server.domain.review.entity.Review;
-import reviewers.server.domain.review.repository.ReviewInterface;
+import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.repository.UserRepository;
 import reviewers.server.global.exception.BaseErrorException;
@@ -20,7 +20,7 @@ public class ReviewHeartService {
 
     private final ReviewHeartRepository reviewHeartRepository;
     private final UserRepository userRepository;
-    private final ReviewInterface reviewRepository;
+    private final ReviewRepository reviewRepository;
 
     private User findUser(ReviewHeartRequestDto request) {
         return userRepository.findById(request.getUserId())

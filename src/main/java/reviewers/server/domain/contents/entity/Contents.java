@@ -2,6 +2,10 @@ package reviewers.server.domain.contents.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import reviewers.server.domain.review.entity.Review;
+
+import java.util.ArrayList;
+import java.util.List;
 import reviewers.server.global.common.BaseEntity;
 
 @Getter
@@ -25,6 +29,9 @@ public class Contents extends BaseEntity {
 
     private long heartCount;
 
+    @OneToMany
+    private List<Review> reviews = new ArrayList<>();
+  
     @Builder
     public Contents(String category, String title, String writer, String summary, String image) {
         this.category = category;
