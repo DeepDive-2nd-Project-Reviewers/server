@@ -4,13 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import reviewers.server.domain.contents.entity.Category;
 
 @Getter
 @Builder
 public class ContentsResponseDto {
     private Long contentId;
 
-    private String category;
+    private Category category;
 
     private String title;
 

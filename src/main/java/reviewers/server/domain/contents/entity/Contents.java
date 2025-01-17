@@ -17,7 +17,8 @@ public class Contents extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String title;
 
@@ -29,11 +30,11 @@ public class Contents extends BaseEntity {
 
     private long heartCount;
 
-    @OneToMany
+    @OneToMany(mappedBy = "contents", orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
-  
+
     @Builder
-    public Contents(String category, String title, String writer, String summary, String image) {
+    public Contents(Category category, String title, String writer, String summary, String image) {
         this.category = category;
         this.title = title;
         this.writer = writer;
@@ -41,7 +42,7 @@ public class Contents extends BaseEntity {
         this.image = image;
     }
 
-    public void updateContents(String category, String title, String writer, String summary, String image) {
+    public void updateContents(Category category, String title, String writer, String summary, String image) {
         this.category = category;
         this.title = title;
         this.writer = writer;

@@ -18,27 +18,27 @@ import reviewers.server.global.success.SuccessResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/comments")
+@RequestMapping("/api/v1")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/review/{reviewId}")
+    @PostMapping("/reviews/{reviewId}/comments")
     public SuccessResponse<CommentResponseDto> createComment(@PathVariable Long reviewId, @RequestBody CommentRequestDto commentRequestDto) {
         return new SuccessResponse<>(commentService.createComment(reviewId, commentRequestDto));
     }
 
-    @GetMapping("/review/{reviewId}")
+    @GetMapping("/reviews/{reviewId}/comments")
     public SuccessResponse<List<CommentResponseDto>> getComments(@PathVariable Long reviewId) {
         return new SuccessResponse<>(commentService.findCommentsByReviewId(reviewId));
     }
 
-    @PutMapping("/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public SuccessResponse<CommentResponseDto> editComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequestDto commentUpdateRequestDto) {
         return new SuccessResponse<>(commentService.updateComment(commentId, commentUpdateRequestDto));
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public SuccessResponse<Void> deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
         return SuccessResponse.ok("삭제 성공");

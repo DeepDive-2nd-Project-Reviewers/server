@@ -31,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // 토큰 검사 제외 경로
-        if (requestURI.startsWith("/api/v1/user/") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/loginSuccess")) {
+        // 테스트를 위해 모두 제외, 추후에 수정 필요
+        if (isPublicUrl(request)) {
             filterChain.doFilter(request, response); // 토큰 검사 없이 진행
             return;
         }
@@ -43,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new BaseErrorException(ErrorType._TOKEN_MISSING);
         }
 
-        token = token.substring(7); // "Bearer " 제거
+        token = token.substring(7);
 
         try {
             if (jwtProvider.validateToken(token)) {
@@ -93,5 +94,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new BaseErrorException(ErrorType._INVALID_TOKEN);
         }
     }
+
+    private static boolean isPublicUrl(HttpServletRequest request) {
+        String contextPath = request.getContextPath();  // 배포 환경의 컨텍스트 경로
+        String requestURI = request.getRequestURI();
+        String fullPath = contextPath + requestURI;
+
+        return fullPath.startsWith(contextPath + "/swagger-ui/**") ||
+                fullPath.startsWith(contextPath + "/v3/api-docs") ||
+                fullPath.startsWith(contextPath + "/favicon.ico") ||
+                fullPath.startsWith(contextPath + "/api/health") ||
+                fullPath.startsWith(contextPath + "/error") ||
+                fullPath.startsWith(contextPath + "/api/v1/user/") ||
+                fullPath.startsWith(contextPath + "/login") ||
+                fullPath.startsWith("/api/v1/loginSuccess");
+    }
+
 }
 

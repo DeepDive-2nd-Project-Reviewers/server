@@ -7,9 +7,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.entity.Role;
@@ -28,13 +32,21 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowCredentials(true);
+                    config.addAllowedOriginPattern("*"); // 모든 Origin 허용
+                    config.addAllowedHeader("*");        // 모든 헤더 허용
+                    config.addAllowedMethod("*");        // 모든 HTTP 메서드 허용
+                    return config;
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/api/v1/user/**"
                                 ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
-                                ,"/error"
-                        ).permitAll()
+                                ,"/favicon.ico"
+                                ,"/error").permitAll()
                         .requestMatchers("/api/v1/comments/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET,"/api/v1/contents/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/api/v1/contents/**").hasRole(Role.ADMIN.name())

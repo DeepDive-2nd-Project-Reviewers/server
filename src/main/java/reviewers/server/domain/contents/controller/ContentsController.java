@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reviewers.server.domain.contents.dto.ContentsRequestDto;
 import reviewers.server.domain.contents.dto.ContentsResponseDto;
+import reviewers.server.domain.contents.entity.Category;
 import reviewers.server.domain.contents.service.ContentsService;
 import reviewers.server.global.success.SuccessResponse;
 
@@ -27,7 +28,7 @@ public class ContentsController {
     }
 
     @GetMapping
-    public SuccessResponse<Slice<ContentsResponseDto>> getAll(@RequestParam(value = "category", required = false) String category,
+    public SuccessResponse<Slice<ContentsResponseDto>> getAll(@RequestParam(value = "category", required = false) Category category,
                                                               @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         Slice<ContentsResponseDto> response = contentsService.readAllByCategory(category, pageable);
         return new SuccessResponse<>(response);

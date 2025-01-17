@@ -2,11 +2,12 @@ package reviewers.server.domain.contents.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import reviewers.server.domain.contents.entity.Category;
 
 @Getter
 @Builder
 public class ContentsRequestDto {
-    private String category;
+    private Category category;
 
     private String title;
 
