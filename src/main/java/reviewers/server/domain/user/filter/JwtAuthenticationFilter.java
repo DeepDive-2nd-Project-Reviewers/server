@@ -71,13 +71,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static boolean isPublicUrl(String requestURI) {
         return
-                requestURI.contains("/swagger-ui") ||  // Swagger 경로 (하위 경로 모두 포함)
-                        requestURI.contains("/v3/api-docs") || // OpenAPI 스펙 경로
-                        requestURI.contains("/favicon.ico") ||
-                        requestURI.contains("/api/health") ||
-                        requestURI.contains("/error") ||
-                        requestURI.contains("/api/v1/user/") ||
-                        requestURI.contains("/login");
+                requestURI.startsWith("/swagger-ui") ||  // Swagger 경로 (하위 경로 모두 포함)
+                        requestURI.startsWith("/v3/api-docs") || // OpenAPI 스펙 경로
+                        requestURI.startsWith("/favicon.ico") ||
+                        requestURI.startsWith("/api/health") ||
+                        requestURI.startsWith("/error") ||
+                        requestURI.startsWith("/api/v1/user/") ||
+                        requestURI.startsWith("/login");
     }
 }
 
