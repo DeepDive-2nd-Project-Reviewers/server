@@ -39,7 +39,7 @@ public class UserController {
     }
 
     // AccessToken 재발급 엔드포인트
-    @PostMapping("/refreshToken")
+    @PostMapping("/refresh-token")
     public SuccessResponse<RefreshAccessTokenResponseDto> refreshToken(@RequestBody RefreshAccessTokenRequestDto requestDto) throws AuthenticationException {
         RefreshAccessTokenResponseDto response = userService.regenAccessToken(requestDto);
         return new SuccessResponse<>(response);
