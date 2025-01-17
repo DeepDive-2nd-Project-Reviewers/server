@@ -24,7 +24,8 @@ public class GoogleTokenVerifier {
             // 사용자 정보 반환
             return new GoogleUserInfo(
                     (String) response.get("email"),
-                    (String) response.get("name")
+                    (String) response.get("name"),
+                    (String) response.get("sub")
             );
         } catch (Exception e) {
             throw new IllegalArgumentException("Google Access Token verification failed", e);
@@ -34,10 +35,12 @@ public class GoogleTokenVerifier {
     public static class GoogleUserInfo {
         private final String email;
         private final String name;
+        private final String providerId;
 
-        public GoogleUserInfo(String email, String name) {
+        public GoogleUserInfo(String email, String name, String providerId) {
             this.email = email;
             this.name = name;
+            this.providerId = providerId;
         }
 
         public String getEmail() {
@@ -46,6 +49,10 @@ public class GoogleTokenVerifier {
 
         public String getName() {
             return name;
+        }
+
+        public String getProviderId() {
+            return providerId;
         }
     }
 }
