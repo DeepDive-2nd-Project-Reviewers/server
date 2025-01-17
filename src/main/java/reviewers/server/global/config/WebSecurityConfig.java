@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -17,7 +18,6 @@ import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.entity.Role;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
 import reviewers.server.domain.user.provider.JwtProvider;
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowCredentials(true);
@@ -70,18 +70,6 @@ public class WebSecurityConfig {
             response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \"" +
                     accessDeniedException.getMessage() + "\", \"path\": \"" + request.getRequestURI() + "\"}");
         };
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
     }
 
 }
