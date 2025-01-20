@@ -1,6 +1,8 @@
 package reviewers.server.domain.review.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +23,12 @@ public class Review extends BaseEntity {
 
     private String title;
     private String content;
-    private Long starCount;
+
+    @Column
+    @Min(0)
+    @Max(10)
+    private int starCount;
+
     private long heartCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,7 +40,7 @@ public class Review extends BaseEntity {
     private Contents contents;
 
     @Builder
-    public Review(ReviewRequestDto reviewRequestDto, Long count, Contents contents, User user) {
+    public Review(ReviewRequestDto reviewRequestDto, int count, Contents contents, User user) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
         this.contents = contents;
@@ -41,7 +48,7 @@ public class Review extends BaseEntity {
         this.starCount = count;
     }
 
-    public void updateReview(ReviewRequestDto reviewRequestDto, Long count) {
+    public void updateReview(ReviewRequestDto reviewRequestDto, int count) {
         this.title = reviewRequestDto.getTitle();
         this.content = reviewRequestDto.getContent();
         this.starCount = count;
