@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                                 ,"/favicon.ico"
                                 ,"/error").permitAll()
                         .requestMatchers("/api/v1/comments/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                        .requestMatchers("/api/v1/contents/{contentId}/reviews/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET,"/api/v1/contents/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/api/v1/contents/**").hasRole(Role.ADMIN.name())
                         .requestMatchers("/api/v1/review/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
