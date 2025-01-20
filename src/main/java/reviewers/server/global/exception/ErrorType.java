@@ -33,6 +33,8 @@ public enum ErrorType {
     _INVALID_AUTHENTICATION(UNAUTHORIZED, "U4014", "인증 방식이 유효하지 않습니다."),
     _TOKEN_MISSING(UNAUTHORIZED,"U4015", "토큰 값이 다르거나, 입력되지 않았습니다."),
 
+    _UNAUTHORIZED_USER(BAD_REQUEST, "U4016", "데이터를 수정할 권한이 없습니다."),
+
     /* ------------------------------- Review -------------------------------------*/
     _NOT_FOUND_REVIEW(BAD_REQUEST, "R4001", "해당 id에 해당하는 Review를 찾을 수 없습니다."),
 
