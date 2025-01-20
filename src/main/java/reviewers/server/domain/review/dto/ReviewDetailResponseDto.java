@@ -14,8 +14,8 @@ public class ReviewDetailResponseDto {
     private String username;
     private String title;
     private String content;
-    private String starCount;
-    private String heartCount;
+    private int starCount;
+    private long heartCount;
 
     private LocalDateTime lastModified;
 
@@ -24,7 +24,7 @@ public class ReviewDetailResponseDto {
         this.username = review.getUser().getUsername();
         this.title = review.getTitle();
         this.content = review.getContent();
-        this.starCount = String.valueOf(review.getStarCount());
-        this.heartCount = String.valueOf(review.getHeartCount());
+        this.starCount = review.getStarCount();
+        this.heartCount = review.getHeartCount();
     }
 }
