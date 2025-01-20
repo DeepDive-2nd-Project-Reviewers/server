@@ -2,7 +2,6 @@ package reviewers.server.domain.comment.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.comment.dto.CommentResponseDto;
@@ -11,9 +10,8 @@ import reviewers.server.domain.comment.entity.Comment;
 import reviewers.server.domain.comment.dto.CommentRequestDto;
 import reviewers.server.domain.comment.repository.CommentRepository;
 import reviewers.server.domain.review.entity.Review;
-import reviewers.server.domain.review.repository.ReviewRepository;
+import reviewers.server.domain.review.service.ReviewService;
 import reviewers.server.domain.user.entity.User;
-import reviewers.server.domain.user.repository.UserRepository;
 import reviewers.server.domain.user.service.UserService;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
@@ -23,14 +21,9 @@ import reviewers.server.global.exception.ErrorType;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final ReviewRepository reviewRepository;
     private final CommentConverter commentConverter;
     private final UserService userService;
-
-    private Review findReview(Long reviewId) {
-        return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
-    }
+    private final ReviewService reviewService;
 
     private Comment findComment(Long commentId) {
         return commentRepository.findById(commentId)
@@ -46,7 +39,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
         User user = userService.findUser();
-        Review review = findReview(reviewId);
+        Review review = reviewService.findReview(reviewId);
 
         Comment comment = commentConverter.toEntity(request, user, review);
         Comment savedComment = commentRepository.save(comment);

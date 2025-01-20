@@ -15,7 +15,6 @@ import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
-import reviewers.server.domain.user.repository.UserRepository;
 import reviewers.server.domain.user.service.UserService;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
@@ -82,6 +81,11 @@ public class ReviewService {
     }
 
     private Review checkIfReviewExist(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
+    }
+
+    public Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_REVIEW));
     }
