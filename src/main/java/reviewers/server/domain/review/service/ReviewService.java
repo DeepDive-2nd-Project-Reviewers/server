@@ -35,7 +35,7 @@ public class ReviewService {
         User user = userService.findUser();
 
         Contents contents = checkIfContentsExists(contentsId);
-        Long count = Long.valueOf(requestDto.getStarCount());
+        int count = requestDto.getStarCount();
 
         Review result = new Review(requestDto, count, contents, user);
         reviewRepository.save(result);
@@ -64,7 +64,7 @@ public class ReviewService {
     public void updateReview(Long contentsId, Long reviewId, ReviewRequestDto requestDto) {
         checkIfContentsExists(contentsId);
         Review review = checkIfReviewExist(reviewId);
-        Long count = Long.valueOf(requestDto.getStarCount());
+        int count = requestDto.getStarCount();
 
         review.updateReview(requestDto, count);
     }
