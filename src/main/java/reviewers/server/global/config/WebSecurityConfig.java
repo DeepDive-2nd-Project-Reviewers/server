@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import reviewers.server.domain.oauth.Filter.GoogleTokenVerifier;
 import reviewers.server.domain.oauth.service.OAuth2UserCustomService;
 import reviewers.server.domain.user.entity.Role;
 import reviewers.server.domain.user.filter.JwtAuthenticationFilter;
@@ -25,6 +26,7 @@ import reviewers.server.domain.user.provider.JwtProvider;
 public class WebSecurityConfig {
 
     private final JwtProvider jwtProvider;
+    private final GoogleTokenVerifier googleTokenVerifier;
     private final OAuth2UserCustomService userDetailsService;
 
     @Bean
@@ -60,7 +62,7 @@ public class WebSecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler())
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, googleTokenVerifier), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     private AccessDeniedHandler customAccessDeniedHandler() {
