@@ -12,6 +12,7 @@ import reviewers.server.domain.heart.content.entity.ContentHeart;
 import reviewers.server.domain.heart.content.repository.ContentHeartRepository;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.repository.UserRepository;
+import reviewers.server.domain.user.service.UserService;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 
@@ -21,14 +22,8 @@ import reviewers.server.global.exception.ErrorType;
 public class ContentHeartService {
 
     private final ContentHeartRepository contentHeartRepository;
-    private final UserRepository userRepository;
     private final ContentsService contentsService;
-
-    private User findUser() {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
-    }
+    private final UserService userService;
 
     private void checkIfAlreadyLiked(User user, Contents content) {
         if (contentHeartRepository.existsByUserAndContent(user, content)) {
@@ -43,7 +38,7 @@ public class ContentHeartService {
     }
 
     public void createHeart(Long contentId) {
-        User user = findUser();
+        User user = userService.findUser();
         Contents content = contentsService.findById(contentId);
 
         checkIfAlreadyLiked(user, content);
@@ -57,7 +52,7 @@ public class ContentHeartService {
     }
 
     public void deleteHeart(Long contentId) {
-        User user = findUser();
+        User user = userService.findUser();
         Contents content = contentsService.findById(contentId);
 
         checkIfNotLiked(user, content);

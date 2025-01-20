@@ -14,6 +14,7 @@ import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.repository.UserRepository;
+import reviewers.server.domain.user.service.UserService;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 
@@ -22,15 +23,9 @@ import reviewers.server.global.exception.ErrorType;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final CommentConverter commentConverter;
-
-    private User findUser() {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
-    }
+    private final UserService userService;
 
     private Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId)
@@ -50,7 +45,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
-        User user = findUser();
+        User user = userService.findUser();
         Review review = findReview(reviewId);
 
         Comment comment = commentConverter.toEntity(request, user, review);

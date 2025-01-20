@@ -2,6 +2,7 @@ package reviewers.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -114,5 +115,9 @@ public class UserService {
         return new LogoutResponseDto("로그아웃 성공");
     }
 
-
+    public User findUser() {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
+    }
 }

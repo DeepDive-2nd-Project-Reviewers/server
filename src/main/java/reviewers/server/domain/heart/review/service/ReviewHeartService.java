@@ -11,6 +11,7 @@ import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.repository.ReviewRepository;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.repository.UserRepository;
+import reviewers.server.domain.user.service.UserService;
 import reviewers.server.global.exception.BaseErrorException;
 import reviewers.server.global.exception.ErrorType;
 
@@ -20,14 +21,8 @@ import reviewers.server.global.exception.ErrorType;
 public class ReviewHeartService {
 
     private final ReviewHeartRepository reviewHeartRepository;
-    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
-
-    private User findUser() {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
-    }
+    private final UserService userService;
 
     private Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId)
@@ -47,7 +42,7 @@ public class ReviewHeartService {
     }
 
     public void createHeart(Long contentId) {
-        User user = findUser();
+        User user = userService.findUser();
         Review review = findReview(contentId);
 
         checkIfAlreadyLiked(user, review);
@@ -61,7 +56,7 @@ public class ReviewHeartService {
     }
 
     public void deleteHeart(Long contentId) {
-        User user = findUser();
+        User user = userService.findUser();
         Review review = findReview(contentId);
 
         checkIfNotLiked(user, review);
