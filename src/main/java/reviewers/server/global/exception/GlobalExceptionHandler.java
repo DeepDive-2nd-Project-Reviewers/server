@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
+    private static final int INTERNAL_SERVER_ERROR = 500;
 
     // 사용자 정의 예외 처리
     @ExceptionHandler(BaseErrorException.class)
@@ -23,6 +24,18 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorType().getStatus())
                 .body(response);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse<Void>> handle(Exception e) {
+
+        logWarning(e, "INTERNAL_SERVER_ERROR가 발생했습니다. 관리자에게 문의하세요");
+        ExceptionResponse<Void> response = ExceptionResponse.fail("INTERNAL_SERVER_ERROR가 발생했습니다. 관리자에게 문의하세요.", e.getMessage());
+
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .body(response);
+    }
+
 
     // log.warn이 중복되어 리팩토링
     private void logWarning(Exception e, String errorCode) {
