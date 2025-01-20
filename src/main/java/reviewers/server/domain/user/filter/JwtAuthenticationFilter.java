@@ -51,7 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new BaseErrorException(ErrorType._INVALID_TOKEN);
         }
 
-
         // 토큰에서 사용자 정보 추출
         String email = jwtProvider.getEmailFromToken(token);
         String role = jwtProvider.getRoleFromToken(token);
@@ -79,8 +78,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/favicon.ico") ||
                 requestURI.startsWith("/api/health") ||
                 requestURI.startsWith("/error") ||
-                requestURI.startsWith("/api/v1/user/**");
+                requestURI.startsWith("/api/v1/user") ||
+                requestURI.startsWith("/login") ||
+                requestURI.startsWith("/api/v1/loginSuccess");
     }
-
 }
 
