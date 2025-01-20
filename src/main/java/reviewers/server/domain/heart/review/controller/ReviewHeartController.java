@@ -19,14 +19,14 @@ public class ReviewHeartController {
     private final ReviewHeartService heartService;
 
     @PostMapping("/reviews/{reviewId}/hearts")
-    public SuccessResponse<Void> createHeart(@PathVariable Long reviewId, @RequestBody ReviewHeartRequestDto requestDto) {
-        heartService.createHeart(reviewId, requestDto);
+    public SuccessResponse<Void> createHeart(@PathVariable Long reviewId) {
+        heartService.createHeart(reviewId);
         return SuccessResponse.ok("좋아요 성공");
     }
 
     @DeleteMapping("/reviews/{reviewId}/hearts")
-    public SuccessResponse<Void> deleteHeart(@PathVariable Long reviewId, @RequestBody ReviewHeartRequestDto requestDto) {
-        heartService.deleteHeart(reviewId, requestDto);
+    public SuccessResponse<Void> deleteHeart(@PathVariable Long reviewId) {
+        heartService.deleteHeart(reviewId);
         return SuccessResponse.ok("좋아요 취소 성공");
     }
 }

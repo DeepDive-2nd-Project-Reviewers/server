@@ -20,14 +20,14 @@ public class ContentHeartController {
     private final ContentHeartService heartService;
 
     @PostMapping("/contents/{contentId}/hearts")
-    public SuccessResponse<Void> createHeart(@PathVariable Long contentId, @RequestBody ContentHeartRequestDto requestDto) {
-        heartService.createHeart(contentId, requestDto);
+    public SuccessResponse<Void> createHeart(@PathVariable Long contentId) {
+        heartService.createHeart(contentId);
         return SuccessResponse.ok("좋아요 성공");
     }
 
     @DeleteMapping("/contents/{contentId}/hearts")
-    public SuccessResponse<Void> deleteHeart(@PathVariable Long contentId, @RequestBody ContentHeartRequestDto requestDto) {
-        heartService.deleteHeart(contentId, requestDto);
+    public SuccessResponse<Void> deleteHeart(@PathVariable Long contentId) {
+        heartService.deleteHeart(contentId);
         return SuccessResponse.ok("좋아요 취소 성공");
     }
 }

@@ -1,6 +1,7 @@
 package reviewers.server.domain.heart.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.heart.review.dto.ReviewHeartRequestDto;
@@ -22,8 +23,9 @@ public class ReviewHeartService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
 
-    private User findUser(ReviewHeartRequestDto request) {
-        return userRepository.findById(request.getUserId())
+    private User findUser() {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
     }
 
@@ -44,8 +46,8 @@ public class ReviewHeartService {
         }
     }
 
-    public void createHeart(Long contentId, ReviewHeartRequestDto request) {
-        User user = findUser(request);
+    public void createHeart(Long contentId) {
+        User user = findUser();
         Review review = findReview(contentId);
 
         checkIfAlreadyLiked(user, review);
@@ -58,8 +60,8 @@ public class ReviewHeartService {
         review.addHeartCount();
     }
 
-    public void deleteHeart(Long contentId, ReviewHeartRequestDto request) {
-        User user = findUser(request);
+    public void deleteHeart(Long contentId) {
+        User user = findUser();
         Review review = findReview(contentId);
 
         checkIfNotLiked(user, review);

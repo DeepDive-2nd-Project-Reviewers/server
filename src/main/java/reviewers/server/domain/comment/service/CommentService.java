@@ -2,6 +2,7 @@ package reviewers.server.domain.comment.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.comment.dto.CommentResponseDto;
@@ -25,8 +26,9 @@ public class CommentService {
     private final ReviewRepository reviewRepository;
     private final CommentConverter commentConverter;
 
-    private User findUser(CommentRequestDto request) {
-        return userRepository.findById(request.getUserId())
+    private User findUser() {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_CONTENT));
     }
 
@@ -48,7 +50,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
-        User user = findUser(request);
+        User user = findUser();
         Review review = findReview(reviewId);
 
         Comment comment = commentConverter.toEntity(request, user, review);

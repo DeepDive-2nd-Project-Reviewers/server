@@ -1,6 +1,7 @@
 package reviewers.server.domain.heart.content.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reviewers.server.domain.contents.entity.Contents;
@@ -21,11 +22,11 @@ public class ContentHeartService {
 
     private final ContentHeartRepository contentHeartRepository;
     private final UserRepository userRepository;
-    private final ContentsRepository contentsRepository;
     private final ContentsService contentsService;
 
-    private User findUser(ContentHeartRequestDto request) {
-        return userRepository.findById(request.getUserId())
+    private User findUser() {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_USER));
     }
 
@@ -41,8 +42,8 @@ public class ContentHeartService {
         }
     }
 
-    public void createHeart(Long contentId, ContentHeartRequestDto request) {
-        User user = findUser(request);
+    public void createHeart(Long contentId) {
+        User user = findUser();
         Contents content = contentsService.findById(contentId);
 
         checkIfAlreadyLiked(user, content);
@@ -55,8 +56,8 @@ public class ContentHeartService {
         content.addHeartCount();
     }
 
-    public void deleteHeart(Long contentId, ContentHeartRequestDto request) {
-        User user = findUser(request);
+    public void deleteHeart(Long contentId) {
+        User user = findUser();
         Contents content = contentsService.findById(contentId);
 
         checkIfNotLiked(user, content);
