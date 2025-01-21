@@ -25,17 +25,6 @@ public class CommentService {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    private Comment findComment(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_COMMENT));
-    }
-
-    private void checkCommentsEmpty(List<Comment> comments) {
-        if(comments.isEmpty()){
-            throw new BaseErrorException(ErrorType._EMPTY_COMMENT);
-        }
-    }
-
     @Transactional
     public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
         User user = userService.findUser();
@@ -59,15 +48,38 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
+
+        User user = userService.findUser();
         Comment comment = findComment(commentId);
+        checkIfReviewMine(user, commentId);
 
         comment.updateContent(commentUpdateRequestDto.getContent());
         return commentConverter.toResponse(comment);
     }
 
-    @Transactional
     public void deleteComment(Long commentId) {
+
+        User user = userService.findUser();
         Comment comment = findComment(commentId);
+        checkIfReviewMine(user, commentId);
         commentRepository.delete(comment);
+    }
+
+    private void checkIfReviewMine(User user, Long commentId) {
+        if(user.getUserId().equals(commentId)) {
+            return;
+        }
+        throw new BaseErrorException(ErrorType._UNAUTHORIZED_USER);
+    }
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseErrorException(ErrorType._NOT_FOUND_COMMENT));
+    }
+
+    private void checkCommentsEmpty(List<Comment> comments) {
+        if(comments.isEmpty()){
+            throw new BaseErrorException(ErrorType._EMPTY_COMMENT);
+        }
     }
 }

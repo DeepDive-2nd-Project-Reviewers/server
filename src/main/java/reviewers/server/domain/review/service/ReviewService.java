@@ -62,17 +62,30 @@ public class ReviewService {
 
     @Transactional
     public void updateReview(Long contentsId, Long reviewId, ReviewRequestDto requestDto) {
+
+        User user = userService.findUser();
         checkIfContentsExists(contentsId);
         Review review = checkIfReviewExist(reviewId);
+        checkIfReviewMine(user, review);
         int count = requestDto.getStarCount();
 
         review.updateReview(requestDto, count);
     }
 
     public void deleteReview(Long contentsId, Long reviewId) {
+
+        User user = userService.findUser();
         checkIfContentsExists(contentsId);
         Review review = checkIfReviewExist(reviewId);
+        checkIfReviewMine(user, review);
         reviewRepository.delete(review);
+    }
+
+    private void checkIfReviewMine(User user, Review review) {
+        if(user.getUserId().equals(review.getUser().getUserId())) {
+            return;
+        }
+        throw new BaseErrorException(ErrorType._UNAUTHORIZED_USER);
     }
 
     private Contents checkIfContentsExists(Long contentsId) {
