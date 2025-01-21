@@ -18,6 +18,7 @@ import reviewers.server.global.exception.ErrorType;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -25,7 +26,6 @@ public class CommentService {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    @Transactional
     public CommentResponseDto createComment(Long reviewId, CommentRequestDto request) {
         User user = userService.findUser();
         Review review = reviewService.findReview(reviewId);
@@ -46,7 +46,6 @@ public class CommentService {
                 .toList();
     }
 
-    @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
 
         User user = userService.findUser();
