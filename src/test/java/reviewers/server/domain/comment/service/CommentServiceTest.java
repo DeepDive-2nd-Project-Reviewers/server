@@ -1,5 +1,6 @@
 package reviewers.server.domain.comment.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -126,6 +127,20 @@ public class CommentServiceTest {
         verify(commentRepository).findById(commentId);
     }
 
+    @Test
+    @DisplayName("댓글 삭제 성공")
+    void deleteComment_Success() {
+        // given
+        Long commentId = 1L;
 
+        when(userService.findUser()).thenReturn(user);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+
+        // when
+        assertDoesNotThrow(() -> commentService.deleteComment(commentId));
+
+        // then
+        verify(commentRepository).delete(comment);
+    }
 
 }
