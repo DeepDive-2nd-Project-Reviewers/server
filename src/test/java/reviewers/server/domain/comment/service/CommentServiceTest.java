@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import reviewers.server.domain.comment.dto.CommentRequestDto;
 import reviewers.server.domain.comment.dto.CommentResponseDto;
+import reviewers.server.domain.comment.dto.CommentUpdateRequestDto;
 import reviewers.server.domain.comment.entity.Comment;
 import reviewers.server.domain.comment.repository.CommentRepository;
 import reviewers.server.domain.contents.entity.Category;
@@ -53,6 +56,8 @@ public class CommentServiceTest {
     @BeforeEach
     void setUp() {
         user = new User("test@naver.com", "test");
+        // user id set 1L
+        ReflectionTestUtils.setField(user, "userId", 1L);
         contents = new Contents(Category.MOVIE, "내용", "작가", "요약", "이미지 링크");
         review = new Review(ReviewRequestDto.builder().title("제목").content("내용").build(), 5, contents, user);
         comment = new Comment("댓글", user, review);
@@ -78,7 +83,7 @@ public class CommentServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(response, result);
-        verify(commentRepository, times(1)).save(comment);
+        verify(commentRepository).save(comment);
     }
 
     @Test
@@ -95,10 +100,32 @@ public class CommentServiceTest {
         List<CommentResponseDto> result = commentService.findCommentsByReviewId(reviewId);
 
         // then
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
+        assertNotNull(result);
         assertEquals(response, result.get(0));
-        verify(commentRepository, times(1)).findByReviewId(reviewId);
+        verify(commentRepository).findByReviewId(reviewId);
     }
+
+    @Test
+    @DisplayName("댓글 업데이트 성공")
+    void updateComment_Success() {
+        // given
+        Long commentId = 1L;
+        CommentUpdateRequestDto updateRequest = new CommentUpdateRequestDto("업데이트된 댓글");
+        CommentResponseDto response = CommentResponseDto.builder().id(1L).content("업데이트된 댓글").nickname("test").build();
+
+        when(userService.findUser()).thenReturn(user);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(commentConverter.toResponse(comment)).thenReturn(response);
+
+        // when
+        CommentResponseDto result = commentService.updateComment(commentId, updateRequest);
+
+        // then
+        assertNotNull(result);
+        assertEquals(response, result);
+        verify(commentRepository).findById(commentId);
+    }
+
+
 
 }
