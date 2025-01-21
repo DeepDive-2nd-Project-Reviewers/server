@@ -1,9 +1,11 @@
 package reviewers.server.domain.review.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class ReviewRequestDto {
 
     @NotNull
