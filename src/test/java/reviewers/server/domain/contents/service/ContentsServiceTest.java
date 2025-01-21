@@ -29,9 +29,6 @@ public class ContentsServiceTest {
     private ContentsRepository contentsRepository;
 
     @Mock
-    private ActorRepository actorRepository;
-
-    @Mock
     private ContentsMapper contentsMapper;
 
     @Mock
@@ -39,9 +36,6 @@ public class ContentsServiceTest {
 
     @Mock
     private ActorService actorService;
-
-    @Mock
-    private FileUploadService fileUploadService;
 
     @InjectMocks
     private ContentsService contentsService;
