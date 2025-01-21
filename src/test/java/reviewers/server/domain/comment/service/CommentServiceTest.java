@@ -2,9 +2,8 @@ package reviewers.server.domain.comment.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.times;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +29,8 @@ import reviewers.server.domain.review.entity.Review;
 import reviewers.server.domain.review.service.ReviewService;
 import reviewers.server.domain.user.entity.User;
 import reviewers.server.domain.user.service.UserService;
+import reviewers.server.global.exception.BaseErrorException;
+import reviewers.server.global.exception.ErrorType;
 
 @ExtendWith(MockitoExtension.class)
 public class CommentServiceTest {
@@ -143,4 +144,19 @@ public class CommentServiceTest {
         verify(commentRepository).delete(comment);
     }
 
+    @Test
+    @DisplayName("댓글 업데이트 실패 - 댓글 없음")
+    void updateComment_NotFound() {
+        // given
+        Long commentId = 1L;
+        CommentUpdateRequestDto updateRequest = new CommentUpdateRequestDto("업데이트된 댓글");
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        // when
+        BaseErrorException exception = assertThrows(BaseErrorException.class, () -> commentService.updateComment(commentId, updateRequest));
+
+        // then
+        assertEquals(ErrorType._NOT_FOUND_COMMENT, exception.getErrorType());
+    }
 }
