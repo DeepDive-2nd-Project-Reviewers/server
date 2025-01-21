@@ -81,4 +81,24 @@ public class CommentServiceTest {
         verify(commentRepository, times(1)).save(comment);
     }
 
+    @Test
+    @DisplayName("리뷰 ID로 댓글 조회 성공")
+    void findCommentsByReviewId_Success() {
+        // given
+        Long reviewId = 1L;
+        CommentResponseDto response = CommentResponseDto.builder().id(1L).content("댓글").nickname("test").build();
+
+        when(commentRepository.findByReviewId(reviewId)).thenReturn(List.of(comment));
+        when(commentConverter.toResponse(comment)).thenReturn(response);
+
+        // when
+        List<CommentResponseDto> result = commentService.findCommentsByReviewId(reviewId);
+
+        // then
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(response, result.get(0));
+        verify(commentRepository, times(1)).findByReviewId(reviewId);
+    }
+
 }
