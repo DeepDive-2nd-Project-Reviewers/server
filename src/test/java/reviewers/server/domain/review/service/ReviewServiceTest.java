@@ -14,6 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import reviewers.server.domain.contents.entity.Category;
 import reviewers.server.domain.contents.entity.Contents;
 import reviewers.server.domain.contents.repository.ContentsRepository;
+import reviewers.server.domain.review.dto.ReviewDetailResponseDto;
 import reviewers.server.domain.review.dto.ReviewRequestDto;
 import reviewers.server.domain.review.dto.ReviewResponseDto;
 import reviewers.server.domain.review.entity.Review;
@@ -67,6 +68,7 @@ class ReviewServiceTest {
                 .starCount(1)
                 .build();
         review = new Review(reviewRequestDto, 5, contents, user);
+        ReflectionTestUtils.setField(review, "id", 1L);
     }
 
     @DisplayName("Review를 생성합니다.")
@@ -95,7 +97,7 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
 
-    @DisplayName("Content 아이디로 Review 조회에 성공합니다!")
+    @DisplayName("Content 아이디로 Review 리스트 조회에 성공합니다!")
     @Test
     void getReview() {
      //given
@@ -111,6 +113,23 @@ class ReviewServiceTest {
         verify(contentsRepository, times(1)).findById(contents.getId());
 
         assertThat(result.getSize()).isEqualTo(1);
+    }
+
+    @DisplayName("Review에 대한 상세정보를 제공합니다.")
+    @Test
+    void getDetailReviewInfo() {
+     //given
+        when(contentsRepository.findById(contents.getId())).thenReturn(Optional.of(contents));
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+
+     //when
+        ReviewDetailResponseDto result = reviewService.getReview(contents.getId(), review.getId());
+
+        //then
+        verify(contentsRepository, times(1)).findById(contents.getId());
+        verify(reviewRepository, times(1)).findById(review.getId());
+        assertThat(result.getTitle()).isEqualTo(review.getTitle());
+        assertThat(result.getContent()).isEqualTo(review.getContent());
     }
 
     @DisplayName("Review를 수정합니다.")
