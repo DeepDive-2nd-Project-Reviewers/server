@@ -26,5 +26,5 @@ public class Actor {
     private String actorName;
 
     @OneToMany(mappedBy = "actor", cascade = ALL)
-    private List<ActorAppearances> actorAppearances = new ArrayList<>();
+    private List<ActorAppearances> actorAppearanceList = new ArrayList<>();
 }
