@@ -11,6 +11,7 @@ import reviewers.server.global.common.BaseEntity;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "contents")
 public class Contents extends BaseEntity {
     @Id
