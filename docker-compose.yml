@@ -3,9 +3,6 @@ version: '3.8'
 services:
   review-service:
     image: wjd4204/review-service:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: review-service
     ports:
       - 8082:8080
