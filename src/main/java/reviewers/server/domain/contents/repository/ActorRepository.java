@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface ActorRepository extends JpaRepository<Actor, Long> {
-    List<Actor> findByNameIn(Set<String> names);
+    List<Actor> findByActorNameIn(Set<String> names);
 }

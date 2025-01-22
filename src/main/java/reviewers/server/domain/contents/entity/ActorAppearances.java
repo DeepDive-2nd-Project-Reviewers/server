@@ -1,5 +1,7 @@
 package reviewers.server.domain.contents.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -11,13 +13,15 @@ import lombok.experimental.SuperBuilder;
 public class ActorAppearances {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "actor_appearances_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "content_id")
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "contents_id")
     private Contents contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "actor_id")
     private Actor actor;
 }
