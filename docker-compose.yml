@@ -3,8 +3,6 @@ version: '3.8'
 services:
   review-service:
     image: wjd4204/review-service:latest
-    build:
-      context: src/main/java
     container_name: review-service
     ports:
       - 8082:8080
@@ -20,6 +18,10 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_NAME: ${S3_NAME}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
 
   customer-service:
     image: snhng/customer-service:latest
@@ -35,3 +37,10 @@ services:
       DB_NAME: ${DB_NAME}
       ALADIN_KEY: ${ALADIN_KEY}
       KOFIC_KEY: ${KOFIC_KEY}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+    command: [ "redis-server", "--appendonly", "yes" ]
