@@ -35,3 +35,9 @@ services:
       DB_NAME: ${DB_NAME}
       ALADIN_KEY: ${ALADIN_KEY}
       KOFIC_KEY: ${KOFIC_KEY}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
