@@ -34,25 +34,25 @@ public class ActorService {
     }
 
     private void saveNewActors(Set<String> names) {
-        Set<String> existingNames = actorRepository.findByNameIn(names).stream()
-                .map(Actor::getName)
+        Set<String> existingNames = actorRepository.findByActorNameIn(names).stream()
+                .map(Actor::getActorName)
                 .collect(Collectors.toSet());
 
         List<Actor> newActors = names.stream()
                 .filter(name -> !existingNames.contains(name))
-                .map(name -> Actor.builder().name(name).build())
+                .map(name -> Actor.builder().actorName(name).build())
                 .toList();
         actorRepository.saveAll(newActors);
     }
 
     private List<Actor> findActorsByNames(Set<String> names) {
-        return actorRepository.findByNameIn(names);
+        return actorRepository.findByActorNameIn(names);
     }
 
     public String getAllActorsByContents(Contents contents) {
         List<Actor> actors = actorAppearancesService.getAllActorsByContent(contents);
         return actors.stream()
-                .map(Actor::getName)
+                .map(Actor::getActorName)
                 .collect(Collectors.joining(", "));
     }
 }
