@@ -50,7 +50,7 @@ public class CommentService {
 
         User user = userService.findUser();
         Comment comment = findComment(commentId);
-        checkIfReviewMine(user, commentId);
+        checkIfCommentMine(user, comment.getUser().getUserId());
 
         comment.updateContent(commentUpdateRequestDto.getContent());
         return commentConverter.toResponse(comment);
@@ -60,12 +60,12 @@ public class CommentService {
 
         User user = userService.findUser();
         Comment comment = findComment(commentId);
-        checkIfReviewMine(user, commentId);
+        checkIfCommentMine(user, comment.getUser().getUserId());
         commentRepository.delete(comment);
     }
 
-    private void checkIfReviewMine(User user, Long commentId) {
-        if(user.getUserId().equals(commentId)) {
+    private void checkIfCommentMine(User user, Long userId) {
+        if(user.getUserId().equals(userId)) {
             return;
         }
         throw new BaseErrorException(ErrorType._UNAUTHORIZED_USER);
