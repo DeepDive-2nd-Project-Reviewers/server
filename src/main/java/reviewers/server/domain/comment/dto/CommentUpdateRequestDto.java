@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class CommentUpdateRequestDto {
 
