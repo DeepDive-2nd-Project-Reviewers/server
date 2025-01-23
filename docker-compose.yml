@@ -24,6 +24,7 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis
     networks:
