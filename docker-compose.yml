@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  review: 
+    driver: bridge
+
 services:
   review-service:
     image: wjd4204/review-service:latest
@@ -22,6 +26,8 @@ services:
       REDIS_PORT: 6379
     depends_on:
       - redis
+    networks:
+      - review
 
   customer-service:
     image: snhng/customer-service:latest
@@ -37,9 +43,13 @@ services:
       DB_NAME: ${DB_NAME}
       ALADIN_KEY: ${ALADIN_KEY}
       KOFIC_KEY: ${KOFIC_KEY}
+    networks:
+      - review
 
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - review
