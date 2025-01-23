@@ -2,12 +2,11 @@ package reviewers.server.domain.comment.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class CommentRequestDto {
 
